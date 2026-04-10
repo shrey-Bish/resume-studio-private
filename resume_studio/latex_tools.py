@@ -97,12 +97,32 @@ def compile_latex_source(source: str, jobname: str = "resume") -> tuple[bytes, s
 def pdf_preview_iframe(pdf_bytes: bytes, height: int = 680) -> str:
     encoded = base64.b64encode(pdf_bytes).decode("utf-8")
     return (
-        "<iframe "
-        f"src='data:application/pdf;base64,{encoded}' "
-        "width='100%' "
-        f"height='{height}' "
-        "style='border:1px solid #d9d9d9;border-radius:12px;'>"
-        "</iframe>"
+        f"""
+        <div style="border:1px solid #d9d9d9;border-radius:12px;overflow:hidden;background:#f8f8f8;">
+          <object id="pdf-preview" type="application/pdf" width="100%" height="{height}" style="display:block;">
+            <div style="padding:16px;font-family:sans-serif;">
+              PDF preview is not available in this browser.
+              <a id="pdf-preview-link" target="_blank" rel="noopener noreferrer">Open the PDF in a new tab</a>.
+            </div>
+          </object>
+        </div>
+        <script>
+          (function() {{
+            const b64 = "{encoded}";
+            const binary = atob(b64);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i += 1) {{
+              bytes[i] = binary.charCodeAt(i);
+            }}
+            const blob = new Blob([bytes], {{ type: "application/pdf" }});
+            const url = URL.createObjectURL(blob);
+            const obj = document.getElementById("pdf-preview");
+            const link = document.getElementById("pdf-preview-link");
+            obj.data = url;
+            link.href = url;
+          }})();
+        </script>
+        """
     )
 
 
