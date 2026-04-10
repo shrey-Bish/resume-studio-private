@@ -9,6 +9,8 @@ Resume Studio is a Streamlit app that helps tailor one of your base resumes to a
 It supports:
 
 - multiple uploaded resume variants
+- LaTeX resume upload and tailoring
+- real PDF preview for tailored LaTeX resumes when a TeX compiler is available
 - JD text paste or job URL scraping
 - PDF, DOCX, and Markdown downloads
 - optional GitHub-backed storage in a private repo
@@ -61,4 +63,4 @@ That makes it a much better fit than Streamlit Community Cloud for:
 
 - LaTeX toolchains like `pdflatex`, `xelatex`, or `latexmk`
 - richer PDF pipelines
-- future real-time compile/preview flows for `.tex` resumes
+- real-time compile/preview flows for `.tex` resumes

@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 APP_DIR = Path(__file__).resolve().parent
 ROOT_DIR = APP_DIR.parent
@@ -13,6 +14,7 @@ if str(ROOT_DIR) not in sys.path:
 from resume_studio.ai_client import generate_application_pack
 from resume_studio.exporters import docx_bytes, markdown_bytes, pdf_bytes, zip_bytes
 from resume_studio.job_parser import build_job_input, extract_resume_text
+from resume_studio.latex_tools import compile_latex_source, latex_compiler_available, pdf_preview_iframe
 from resume_studio.storage import (
     load_generations,
     load_resumes,
@@ -100,14 +102,16 @@ def render_resume_library(storage_config: dict[str, str]) -> None:
     st.subheader("Base Resume Library")
     uploads = st.file_uploader(
         "Upload resumes",
-        type=["pdf", "docx", "doc", "txt", "md"],
+        type=["pdf", "docx", "doc", "txt", "md", "tex"],
         accept_multiple_files=True,
-        help="Recommended names: AI+SE, SE, and DE.",
+        help="Recommended names: AI+SE, SE, and DE. Upload `.tex` if you want LaTeX tailoring and compilation.",
     )
 
     if uploads:
         for upload in uploads:
-            extracted_text = extract_resume_text(upload.name, upload.getvalue())
+            raw_text = upload.getvalue().decode("utf-8", errors="ignore") if upload.name.lower().endswith(".tex") else ""
+            extracted_text = raw_text if upload.name.lower().endswith(".tex") else extract_resume_text(upload.name, upload.getvalue())
+            content_type = "latex" if upload.name.lower().endswith(".tex") else "text"
             suggested_name = Path(upload.name).stem
             with st.expander(f"Import {upload.name}", expanded=False):
                 custom_name = st.text_input(
@@ -122,7 +126,14 @@ def render_resume_library(storage_config: dict[str, str]) -> None:
                     key=f"preview-{upload.name}",
                 )
                 if st.button("Save resume", key=f"save-{upload.name}", type="primary"):
-                    persist_resume(storage_config, custom_name, upload.name, extracted_text)
+                    persist_resume(
+                        storage_config,
+                        custom_name,
+                        upload.name,
+                        extracted_text,
+                        content_type=content_type,
+                        source_content=raw_text if content_type == "latex" else extracted_text,
+                    )
                     st.success(f"Saved {custom_name}")
                     st.rerun()
 
@@ -132,11 +143,12 @@ def render_resume_library(storage_config: dict[str, str]) -> None:
         return
 
     for resume in resumes:
-        with st.expander(f"{resume['name']}  |  {resume['source_filename']}"):
+        content_type = resume.get("content_type", "text")
+        with st.expander(f"{resume['name']}  |  {resume['source_filename']}  |  {content_type}"):
             st.caption(f"Updated: {resume['updated_at']}")
             st.text_area(
                 "Resume text",
-                value=resume["text"],
+                value=resume.get("source_content", resume["text"]),
                 height=240,
                 key=f"resume-{resume['name']}",
             )
@@ -151,6 +163,9 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
     st.subheader("Job Input")
     selected_resume_name = st.selectbox("Which resume should be tailored?", [r["name"] for r in resumes])
     selected_resume = next(item for item in resumes if item["name"] == selected_resume_name)
+    selected_format = selected_resume.get("content_type", "text")
+    if selected_format == "latex":
+        st.info("This resume will be tailored as LaTeX and compiled to a real PDF preview when the compiler is available.")
 
     col1, col2 = st.columns(2)
     with col1:
@@ -183,7 +198,8 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
                     api_key=api_key,
                     model=model,
                     resume_name=selected_resume["name"],
-                    resume_text=selected_resume["text"],
+                    resume_text=selected_resume.get("source_content", selected_resume["text"]),
+                    resume_format=selected_format,
                     job_title=job_input["title"],
                     job_text=job_input["text"],
                     job_url=job_input["source_url"],
@@ -202,7 +218,8 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
                 "source_url": job_input["source_url"],
                 "fit_summary": result.get("fit_summary", ""),
                 "keyword_matches": result.get("keyword_matches", []),
-                "tailored_resume_markdown": result.get("tailored_resume_markdown", ""),
+                "tailored_resume_content": result.get("tailored_resume_content", ""),
+                "output_format": result.get("output_format", "markdown"),
                 "cover_letter": result.get("cover_letter", ""),
                 "cold_email": result.get("cold_email", ""),
             }
@@ -226,19 +243,36 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
     if generation.get("keyword_matches"):
         st.caption("Matched keywords: " + ", ".join(generation["keyword_matches"]))
 
-    resume_md = str(generation["tailored_resume_markdown"])
+    resume_content = str(generation["tailored_resume_content"])
     cover_letter = str(generation["cover_letter"])
     cold_email = str(generation["cold_email"])
+    resume_format = str(generation.get("output_format", "markdown"))
     slug = _slugify(f"{generation['company_name']}-{generation['job_title']}")
+    compile_key = f"{slug}-{generation.get('created_at', 'latest')}"
+    compiled_pdf = _ensure_compiled_pdf(compile_key, resume_format, resume_content)
 
     st.markdown("#### Export Pack")
     export_format = st.radio(
         "Choose pack format",
-        options=["pdf", "docx", "md"],
+        options=_export_options(resume_format, compiled_pdf is not None),
         horizontal=True,
-        format_func=lambda value: value.upper(),
+        format_func=lambda value: {
+            "pdf": "PDF",
+            "docx": "DOCX",
+            "md": "MD",
+            "latex-source": "TEX + Text",
+            "compiled-pdf": "Compiled PDF Pack",
+        }[value],
     )
-    pack_files = _bundle_files(slug, export_format, resume_md, cover_letter, cold_email)
+    pack_files = _bundle_files(
+        slug,
+        export_format,
+        resume_content,
+        cover_letter,
+        cold_email,
+        resume_format=resume_format,
+        compiled_resume_pdf=compiled_pdf,
+    )
     action_col1, action_col2 = st.columns(2)
     with action_col1:
         st.download_button(
@@ -256,25 +290,47 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("#### Tailored Resume")
-        st.text_area("Tailored resume output", value=resume_md, height=320)
-        st.download_button(
-            "Download resume (.md)",
-            data=markdown_bytes(resume_md),
-            file_name=f"{slug}-resume.md",
-            mime="text/markdown",
-        )
-        st.download_button(
-            "Download resume (.docx)",
-            data=docx_bytes("Tailored Resume", resume_md),
-            file_name=f"{slug}-resume.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        )
-        st.download_button(
-            "Download resume (.pdf)",
-            data=pdf_bytes("Tailored Resume", resume_md),
-            file_name=f"{slug}-resume.pdf",
-            mime="application/pdf",
-        )
+        if resume_format == "latex":
+            st.text_area("Tailored LaTeX", value=resume_content, height=320)
+            st.download_button(
+                "Download resume (.tex)",
+                data=resume_content.encode("utf-8"),
+                file_name=f"{slug}-resume.tex",
+                mime="application/x-tex",
+            )
+            if compiled_pdf is not None:
+                st.download_button(
+                    "Download compiled resume (.pdf)",
+                    data=compiled_pdf,
+                    file_name=f"{slug}-resume.pdf",
+                    mime="application/pdf",
+                )
+                components.html(pdf_preview_iframe(compiled_pdf, height=520), height=540)
+            elif latex_compiler_available():
+                st.warning("The LaTeX compiler is available, but this file did not compile successfully.")
+                st.code(st.session_state.get(f"{compile_key}-compile-error", "Compilation failed."), language="text")
+            else:
+                st.info("LaTeX preview will appear when the app is running in an environment with `latexmk`, `pdflatex`, or `xelatex`.")
+        else:
+            st.text_area("Tailored resume output", value=resume_content, height=320)
+            st.download_button(
+                "Download resume (.md)",
+                data=markdown_bytes(resume_content),
+                file_name=f"{slug}-resume.md",
+                mime="text/markdown",
+            )
+            st.download_button(
+                "Download resume (.docx)",
+                data=docx_bytes("Tailored Resume", resume_content),
+                file_name=f"{slug}-resume.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+            st.download_button(
+                "Download resume (.pdf)",
+                data=pdf_bytes("Tailored Resume", resume_content),
+                file_name=f"{slug}-resume.pdf",
+                mime="application/pdf",
+            )
 
     with col2:
         st.markdown("#### Cover Letter")
@@ -353,16 +409,39 @@ def _secret(key: str, default: str = "") -> str:
 def _bundle_files(
     slug: str,
     export_format: str,
-    resume_md: str,
+    resume_content: str,
     cover_letter: str,
     cold_email: str,
+    resume_format: str = "markdown",
+    compiled_resume_pdf: bytes | None = None,
 ) -> list[tuple[str, bytes]]:
+    files: list[tuple[str, bytes]] = []
+    if resume_format == "latex":
+        if export_format == "compiled-pdf":
+            if compiled_resume_pdf is None:
+                raise RuntimeError("Compiled PDF is not available for this resume yet.")
+            files.extend(
+                [
+                    (f"{slug}-resume.pdf", compiled_resume_pdf),
+                    (f"{slug}-cover-letter.pdf", pdf_bytes("Cover Letter", cover_letter)),
+                    (f"{slug}-cold-email.pdf", pdf_bytes("Cold Email", cold_email)),
+                ]
+            )
+        else:
+            files.extend(
+                [
+                    (f"{slug}-resume.tex", resume_content.encode("utf-8")),
+                    (f"{slug}-cover-letter.md", markdown_bytes(cover_letter)),
+                    (f"{slug}-cold-email.md", markdown_bytes(cold_email)),
+                ]
+            )
+        return files
+
     documents = [
-        ("resume", "Tailored Resume", resume_md),
+        ("resume", "Tailored Resume", resume_content),
         ("cover-letter", "Cover Letter", cover_letter),
         ("cold-email", "Cold Email", cold_email),
     ]
-    files: list[tuple[str, bytes]] = []
     for name, title, body in documents:
         if export_format == "pdf":
             files.append((f"{slug}-{name}.pdf", pdf_bytes(title, body)))
@@ -371,6 +450,32 @@ def _bundle_files(
         else:
             files.append((f"{slug}-{name}.md", markdown_bytes(body)))
     return files
+
+
+def _ensure_compiled_pdf(cache_key: str, resume_format: str, resume_content: str) -> bytes | None:
+    if resume_format != "latex" or not latex_compiler_available():
+        return None
+    pdf_key = f"{cache_key}-compiled-pdf"
+    error_key = f"{cache_key}-compile-error"
+    if pdf_key in st.session_state:
+        return st.session_state[pdf_key]
+    try:
+        compiled_pdf, _ = compile_latex_source(resume_content, jobname="resume")
+        st.session_state[pdf_key] = compiled_pdf
+        st.session_state.pop(error_key, None)
+        return compiled_pdf
+    except Exception as exc:  # noqa: BLE001
+        st.session_state[error_key] = str(exc)
+        return None
+
+
+def _export_options(resume_format: str, has_compiled_pdf: bool) -> list[str]:
+    if resume_format == "latex":
+        options = ["latex-source"]
+        if has_compiled_pdf:
+            options.insert(0, "compiled-pdf")
+        return options
+    return ["pdf", "docx", "md"]
 
 
 if __name__ == "__main__":

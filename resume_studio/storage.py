@@ -53,6 +53,8 @@ def persist_resume(
     name: str,
     source_filename: str,
     text: str,
+    content_type: str = "text",
+    source_content: str | None = None,
 ) -> dict[str, Any]:
     if storage_config.get("mode") == "github":
         resumes = _github_read_json(storage_config, storage_config["resumes_path"])
@@ -64,6 +66,8 @@ def persist_resume(
             "name": cleaned_name,
             "source_filename": source_filename,
             "text": text.strip(),
+            "content_type": content_type,
+            "source_content": (source_content if source_content is not None else text).strip(),
             "updated_at": now,
         }
         if existing:
@@ -73,10 +77,16 @@ def persist_resume(
         _github_write_json(storage_config, storage_config["resumes_path"], resumes, "Update resumes store")
         return payload
 
-    return save_resume(name, source_filename, text)
+    return save_resume(name, source_filename, text, content_type=content_type, source_content=source_content)
 
 
-def save_resume(name: str, source_filename: str, text: str) -> dict[str, Any]:
+def save_resume(
+    name: str,
+    source_filename: str,
+    text: str,
+    content_type: str = "text",
+    source_content: str | None = None,
+) -> dict[str, Any]:
     resumes = _read_json(RESUMES_PATH)
     now = datetime.utcnow().isoformat(timespec="seconds") + "Z"
     cleaned_name = name.strip() or source_filename
@@ -86,6 +96,8 @@ def save_resume(name: str, source_filename: str, text: str) -> dict[str, Any]:
         "name": cleaned_name,
         "source_filename": source_filename,
         "text": text.strip(),
+        "content_type": content_type,
+        "source_content": (source_content if source_content is not None else text).strip(),
         "updated_at": now,
     }
 

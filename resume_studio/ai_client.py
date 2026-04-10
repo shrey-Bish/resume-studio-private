@@ -20,6 +20,7 @@ def generate_application_pack(
     model: str,
     resume_name: str,
     resume_text: str,
+    resume_format: str,
     job_title: str,
     job_text: str,
     job_url: str,
@@ -42,6 +43,8 @@ Candidate resume:
 {resume_text}
 <<<END_RESUME>>>
 
+Resume format: {resume_format}
+
 Job description:
 <<<JOB_DESCRIPTION>>>
 {job_text}
@@ -57,14 +60,19 @@ Return JSON with exactly these keys:
 - role_title: string
 - fit_summary: string
 - keyword_matches: array of strings, max 10
-- tailored_resume_markdown: string
+- tailored_resume_content: string
+- output_format: string
 - cover_letter: string
 - cold_email: string
 
 Rules:
 - Keep the tailored resume ATS-friendly and concise.
 - Preserve contact information from the resume when present.
-- Use markdown headings and bullets for the resume.
+- If `resume_format` is `latex`, return a full compile-ready LaTeX document in `tailored_resume_content`.
+- If `resume_format` is `latex`, preserve the class, preamble, macros, and overall document structure unless a minimal safe change is necessary.
+- If `resume_format` is `latex`, do not wrap the LaTeX in markdown fences.
+- If `resume_format` is not `latex`, return markdown headings and bullets in `tailored_resume_content`.
+- Set `output_format` to `latex` or `markdown` accordingly.
 - The cover letter should be brief, around 180-250 words.
 - The cold email should be short, practical, and personalized.
 - If company name is unclear, use "Hiring Team".
