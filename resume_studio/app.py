@@ -18,7 +18,6 @@ from resume_studio.storage import (
     load_resumes,
     persist_generation,
     persist_resume,
-    seed_resume_if_missing,
     seed_resume_if_missing_remote,
 )
 DEFAULT_CV_PATH = ROOT_DIR / "cv.md"
@@ -32,12 +31,7 @@ st.set_page_config(
 
 
 def bootstrap() -> None:
-    if DEFAULT_CV_PATH.exists():
-        seed_resume_if_missing(
-            name="Imported from cv.md",
-            source_filename="cv.md",
-            text=DEFAULT_CV_PATH.read_text(encoding="utf-8"),
-        )
+    return
 
 
 def main() -> None:
@@ -45,54 +39,26 @@ def main() -> None:
     st.title("Resume Studio")
     st.caption("Store multiple base resumes, paste a JD or job link, and generate a tailored resume, cover letter, and cold email.")
 
+    storage_config = {
+        "mode": "github",
+        "repo": _secret("GITHUB_REPO", "shrey-Bish/resume-studio-private").strip(),
+        "branch": _secret("GITHUB_BRANCH", "main").strip() or "main",
+        "token": _secret("GITHUB_TOKEN").strip(),
+        "resumes_path": "storage/resumes.json",
+        "generations_path": "storage/generations.json",
+    }
+    api_key = _secret("OPENAI_API_KEY").strip()
+
     with st.sidebar:
-        st.subheader("OpenAI")
-        default_api_key = st.session_state.get("openai_api_key", _secret("OPENAI_API_KEY"))
-        api_key = st.text_input(
-            "API key",
-            value=default_api_key,
-            type="password",
-            help="Stored only in this browser session.",
-        )
-        if api_key:
-            st.session_state["openai_api_key"] = api_key
+        st.subheader("Workspace")
+        st.caption(f"GitHub storage: `{storage_config['repo']}`")
+        st.caption(f"Branch: `{storage_config['branch']}`")
 
         model = st.selectbox(
             "Model",
             options=["gpt-4.1-mini", "gpt-4.1", "gpt-4o-mini"],
             index=0,
         )
-
-        st.subheader("Storage")
-        storage_mode = st.radio(
-            "Store resumes and generations in",
-            options=["local", "github"],
-            format_func=lambda value: "Local files" if value == "local" else "GitHub private repo",
-        )
-
-        github_repo = ""
-        github_branch = "main"
-        github_token = ""
-        if storage_mode == "github":
-            github_repo = st.text_input(
-                "GitHub repo",
-                value=st.session_state.get("github_repo", _secret("GITHUB_REPO", "shrey-Bish/resume-studio-private")),
-                help="owner/repo",
-            )
-            github_branch = st.text_input(
-                "Branch",
-                value=st.session_state.get("github_branch", _secret("GITHUB_BRANCH", "main")),
-            )
-            github_token = st.text_input(
-                "GitHub token",
-                value=st.session_state.get("github_token", _secret("GITHUB_TOKEN")),
-                type="password",
-                help="Use a fine-grained token with contents read/write access to the private repo.",
-            )
-            st.session_state["github_repo"] = github_repo
-            st.session_state["github_branch"] = github_branch
-            if github_token:
-                st.session_state["github_token"] = github_token
 
         st.subheader("Tips")
         st.markdown(
@@ -103,24 +69,23 @@ def main() -> None:
         if not pdf_export_supported():
             st.caption("PDF export is disabled here, so use Markdown or DOCX downloads.")
 
-    tab_library, tab_generate, tab_history = st.tabs(["Resume Library", "Tailor for a Job", "Recent Generations"])
+    if not storage_config["repo"] or not storage_config["token"]:
+        st.error("GitHub storage is required. Add `GITHUB_REPO` and `GITHUB_TOKEN` to Streamlit secrets.")
+        return
 
-    storage_config = {
-        "mode": storage_mode,
-        "repo": github_repo.strip(),
-        "branch": github_branch.strip() or "main",
-        "token": github_token.strip(),
-        "resumes_path": "storage/resumes.json",
-        "generations_path": "storage/generations.json",
-    }
+    if not api_key:
+        st.error("Add `OPENAI_API_KEY` to Streamlit secrets to generate tailored documents.")
+        return
 
-    if storage_mode == "github" and DEFAULT_CV_PATH.exists() and github_repo and github_token:
+    if DEFAULT_CV_PATH.exists():
         seed_resume_if_missing_remote(
             storage_config=storage_config,
             name="Imported from cv.md",
             source_filename="cv.md",
             text=DEFAULT_CV_PATH.read_text(encoding="utf-8"),
         )
+
+    tab_library, tab_generate, tab_history = st.tabs(["Resume Library", "Tailor for a Job", "Recent Generations"])
 
     with tab_library:
         render_resume_library(storage_config)
@@ -158,11 +123,6 @@ def render_resume_library(storage_config: dict[str, str]) -> None:
                     key=f"preview-{upload.name}",
                 )
                 if st.button("Save resume", key=f"save-{upload.name}", type="primary"):
-                    if storage_config.get("mode") == "github" and (
-                        not storage_config.get("repo") or not storage_config.get("token")
-                    ):
-                        st.error("Add GitHub repo and token in the sidebar first.")
-                        return
                     persist_resume(storage_config, custom_name, upload.name, extracted_text)
                     st.success(f"Saved {custom_name}")
                     st.rerun()

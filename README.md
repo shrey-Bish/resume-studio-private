@@ -12,6 +12,7 @@ It supports:
 - JD text paste or job URL scraping
 - PDF, DOCX, and Markdown downloads
 - optional GitHub-backed storage in a private repo
+- GitHub-backed storage enabled by default in Streamlit Cloud
 
 ## Run locally
 
@@ -47,4 +48,5 @@ The full Streamlit app itself cannot run on GitHub Pages because it needs a Pyth
 Notes:
 
 - `requirements.txt` is included for Streamlit Cloud.
+- The app reads `OPENAI_API_KEY`, `GITHUB_REPO`, `GITHUB_BRANCH`, and `GITHUB_TOKEN` from Streamlit secrets and does not ask for them in the UI.
 - The app will still run if Node/Playwright is unavailable, but PDF downloads and browser-rendered JD scraping may be disabled there.
