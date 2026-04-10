@@ -101,10 +101,10 @@ def _parse_json(content: str) -> dict[str, Any]:
     try:
         return json.loads(content)
     except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", content, flags=re.DOTALL)
-        if not match:
+        extracted = _extract_first_json_object(content)
+        if not extracted:
             raise ValueError("The model did not return valid JSON.")
-        return json.loads(match.group(0))
+        return json.loads(extracted)
 
 
 def _decode_resume_content(parsed: dict[str, Any]) -> str:
@@ -131,3 +131,36 @@ def _strip_code_fences(value: str) -> str:
     if fenced:
         return fenced.group(1).strip()
     return stripped
+
+
+def _extract_first_json_object(content: str) -> str:
+    start = content.find("{")
+    if start == -1:
+        return ""
+
+    depth = 0
+    in_string = False
+    escaped = False
+
+    for index in range(start, len(content)):
+        char = content[index]
+
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+
+        if char == '"':
+            in_string = True
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return content[start:index + 1]
+
+    return ""
