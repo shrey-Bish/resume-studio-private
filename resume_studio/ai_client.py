@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import binascii
 import json
 import re
 from typing import Any
@@ -92,11 +93,7 @@ Rules:
 
     content = response.output_text.strip()
     parsed = _parse_json(content)
-    encoded_resume = parsed.get("tailored_resume_content_b64", "")
-    if encoded_resume:
-        parsed["tailored_resume_content"] = base64.b64decode(encoded_resume).decode("utf-8")
-    else:
-        parsed["tailored_resume_content"] = ""
+    parsed["tailored_resume_content"] = _decode_resume_content(parsed)
     return parsed
 
 
@@ -108,3 +105,29 @@ def _parse_json(content: str) -> dict[str, Any]:
         if not match:
             raise ValueError("The model did not return valid JSON.")
         return json.loads(match.group(0))
+
+
+def _decode_resume_content(parsed: dict[str, Any]) -> str:
+    encoded_resume = str(parsed.get("tailored_resume_content_b64", "") or "").strip()
+    if encoded_resume:
+        cleaned = re.sub(r"\s+", "", encoded_resume)
+        padding = (-len(cleaned)) % 4
+        cleaned = cleaned + ("=" * padding)
+        try:
+            return base64.b64decode(cleaned).decode("utf-8")
+        except (binascii.Error, UnicodeDecodeError):
+            pass
+
+    raw_resume = parsed.get("tailored_resume_content")
+    if isinstance(raw_resume, str) and raw_resume.strip():
+        return _strip_code_fences(raw_resume)
+
+    return ""
+
+
+def _strip_code_fences(value: str) -> str:
+    stripped = value.strip()
+    fenced = re.match(r"^```(?:latex|tex|markdown)?\n(.*)\n```$", stripped, flags=re.DOTALL)
+    if fenced:
+        return fenced.group(1).strip()
+    return stripped
