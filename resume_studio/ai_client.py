@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import re
 from typing import Any
@@ -60,7 +61,7 @@ Return JSON with exactly these keys:
 - role_title: string
 - fit_summary: string
 - keyword_matches: array of strings, max 10
-- tailored_resume_content: string
+- tailored_resume_content_b64: string
 - output_format: string
 - cover_letter: string
 - cold_email: string
@@ -68,10 +69,11 @@ Return JSON with exactly these keys:
 Rules:
 - Keep the tailored resume ATS-friendly and concise.
 - Preserve contact information from the resume when present.
-- If `resume_format` is `latex`, return a full compile-ready LaTeX document in `tailored_resume_content`.
+- Encode the resume content in base64 and return it in `tailored_resume_content_b64`.
+- If `resume_format` is `latex`, encode a full compile-ready LaTeX document in `tailored_resume_content_b64`.
 - If `resume_format` is `latex`, preserve the class, preamble, macros, and overall document structure unless a minimal safe change is necessary.
 - If `resume_format` is `latex`, do not wrap the LaTeX in markdown fences.
-- If `resume_format` is not `latex`, return markdown headings and bullets in `tailored_resume_content`.
+- If `resume_format` is not `latex`, encode markdown headings and bullets in `tailored_resume_content_b64`.
 - Set `output_format` to `latex` or `markdown` accordingly.
 - The cover letter should be brief, around 180-250 words.
 - The cold email should be short, practical, and personalized.
@@ -89,7 +91,13 @@ Rules:
     )
 
     content = response.output_text.strip()
-    return _parse_json(content)
+    parsed = _parse_json(content)
+    encoded_resume = parsed.get("tailored_resume_content_b64", "")
+    if encoded_resume:
+        parsed["tailored_resume_content"] = base64.b64decode(encoded_resume).decode("utf-8")
+    else:
+        parsed["tailored_resume_content"] = ""
+    return parsed
 
 
 def _parse_json(content: str) -> dict[str, Any]:
