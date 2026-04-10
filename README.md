@@ -21,7 +21,7 @@ python3 -m venv .venv-resume-studio
 source .venv-resume-studio/bin/activate
 pip install -r requirements-resume-studio.txt
 npm install
-streamlit run resume_studio/app.py
+streamlit run app.py
 ```
 
 `npm install` is needed for the Playwright-based PDF renderer and browser fallback scraper.
@@ -37,3 +37,14 @@ This repo includes a static landing page in `docs/` that can be served with GitH
 
 The full Streamlit app itself cannot run on GitHub Pages because it needs a Python backend. GitHub Pages can host the project page and instructions, but the app should be run locally or deployed on a Python host like Streamlit Community Cloud, Render, or Railway.
 
+## Deploy on Streamlit Community Cloud
+
+1. Push this repo to GitHub.
+2. In Streamlit Community Cloud, create a new app from `shrey-Bish/resume-studio-private`.
+3. Set the main file path to `app.py`.
+4. Add secrets from `.streamlit/secrets.toml.example`.
+
+Notes:
+
+- `requirements.txt` is included for Streamlit Cloud.
+- The app will still run if Node/Playwright is unavailable, but PDF downloads and browser-rendered JD scraping may be disabled there.

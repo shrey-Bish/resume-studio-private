@@ -11,7 +11,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from resume_studio.ai_client import generate_application_pack
-from resume_studio.exporters import docx_bytes, markdown_bytes, pdf_bytes
+from resume_studio.exporters import docx_bytes, markdown_bytes, pdf_bytes, pdf_export_supported
 from resume_studio.job_parser import build_job_input, extract_resume_text
 from resume_studio.storage import (
     load_generations,
@@ -47,9 +47,10 @@ def main() -> None:
 
     with st.sidebar:
         st.subheader("OpenAI")
+        default_api_key = st.session_state.get("openai_api_key", _secret("OPENAI_API_KEY"))
         api_key = st.text_input(
             "API key",
-            value=st.session_state.get("openai_api_key", ""),
+            value=default_api_key,
             type="password",
             help="Stored only in this browser session.",
         )
@@ -75,16 +76,16 @@ def main() -> None:
         if storage_mode == "github":
             github_repo = st.text_input(
                 "GitHub repo",
-                value=st.session_state.get("github_repo", "shrey-Bish/resume-studio-private"),
+                value=st.session_state.get("github_repo", _secret("GITHUB_REPO", "shrey-Bish/resume-studio-private")),
                 help="owner/repo",
             )
             github_branch = st.text_input(
                 "Branch",
-                value=st.session_state.get("github_branch", "main"),
+                value=st.session_state.get("github_branch", _secret("GITHUB_BRANCH", "main")),
             )
             github_token = st.text_input(
                 "GitHub token",
-                value=st.session_state.get("github_token", ""),
+                value=st.session_state.get("github_token", _secret("GITHUB_TOKEN")),
                 type="password",
                 help="Use a fine-grained token with contents read/write access to the private repo.",
             )
@@ -99,6 +100,8 @@ def main() -> None:
             "- Paste either a JD, a link, or both.\n"
             "- Add notes like tone, visa mention, or preferred project emphasis."
         )
+        if not pdf_export_supported():
+            st.caption("PDF export is disabled here, so use Markdown or DOCX downloads.")
 
     tab_library, tab_generate, tab_history = st.tabs(["Resume Library", "Tailor for a Job", "Recent Generations"])
 
@@ -285,12 +288,13 @@ def render_generation_output(generation: dict[str, object]) -> None:
             file_name=f"{slug}-resume.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
-        st.download_button(
-            "Download resume (.pdf)",
-            data=pdf_bytes("Tailored Resume", resume_md),
-            file_name=f"{slug}-resume.pdf",
-            mime="application/pdf",
-        )
+        if pdf_export_supported():
+            st.download_button(
+                "Download resume (.pdf)",
+                data=pdf_bytes("Tailored Resume", resume_md),
+                file_name=f"{slug}-resume.pdf",
+                mime="application/pdf",
+            )
 
     with col2:
         st.markdown("#### Cover Letter")
@@ -307,12 +311,13 @@ def render_generation_output(generation: dict[str, object]) -> None:
             file_name=f"{slug}-cover-letter.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
-        st.download_button(
-            "Download cover letter (.pdf)",
-            data=pdf_bytes("Cover Letter", cover_letter),
-            file_name=f"{slug}-cover-letter.pdf",
-            mime="application/pdf",
-        )
+        if pdf_export_supported():
+            st.download_button(
+                "Download cover letter (.pdf)",
+                data=pdf_bytes("Cover Letter", cover_letter),
+                file_name=f"{slug}-cover-letter.pdf",
+                mime="application/pdf",
+            )
 
     with col3:
         st.markdown("#### Cold Email")
@@ -329,12 +334,13 @@ def render_generation_output(generation: dict[str, object]) -> None:
             file_name=f"{slug}-cold-email.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
-        st.download_button(
-            "Download cold email (.pdf)",
-            data=pdf_bytes("Cold Email", cold_email),
-            file_name=f"{slug}-cold-email.pdf",
-            mime="application/pdf",
-        )
+        if pdf_export_supported():
+            st.download_button(
+                "Download cold email (.pdf)",
+                data=pdf_bytes("Cold Email", cold_email),
+                file_name=f"{slug}-cold-email.pdf",
+                mime="application/pdf",
+            )
 
 
 def render_history(storage_config: dict[str, str]) -> None:
@@ -357,6 +363,13 @@ def _slugify(value: str) -> str:
     while "--" in cleaned:
         cleaned = cleaned.replace("--", "-")
     return cleaned.strip("-") or "application-pack"
+
+
+def _secret(key: str, default: str = "") -> str:
+    try:
+        return str(st.secrets.get(key, default))
+    except Exception:  # noqa: BLE001
+        return default
 
 
 if __name__ == "__main__":

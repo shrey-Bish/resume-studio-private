@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json
+import shutil
 import subprocess
 import tempfile
 from html import escape
@@ -49,6 +49,9 @@ def docx_bytes(title: str, body: str) -> bytes:
 
 
 def pdf_bytes(title: str, body: str) -> bytes:
+    if not pdf_export_supported():
+        raise RuntimeError("PDF export is unavailable in this environment. Use Markdown or DOCX instead.")
+
     html = _markdown_to_html(title=title, body=body)
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
@@ -64,6 +67,10 @@ def pdf_bytes(title: str, body: str) -> bytes:
         ]
         subprocess.run(command, cwd=ROOT_DIR, check=True, capture_output=True, text=True)
         return output_path.read_bytes()
+
+
+def pdf_export_supported() -> bool:
+    return shutil.which("node") is not None and PDF_RENDERER.exists()
 
 
 def _markdown_to_html(title: str, body: str) -> str:

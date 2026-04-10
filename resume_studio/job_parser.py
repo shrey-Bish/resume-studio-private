@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 from pathlib import Path
 from urllib.parse import urlparse
@@ -103,6 +104,8 @@ def _clean_text(value: str) -> str:
 
 
 def _fetch_with_playwright(url: str) -> dict[str, str]:
+    if shutil.which("node") is None:
+        raise RuntimeError("Browser rendering is unavailable in this environment.")
     script_path = Path(__file__).resolve().parent / "fetch_job.mjs"
     command = ["node", str(script_path), url]
     completed = subprocess.run(
@@ -113,4 +116,3 @@ def _fetch_with_playwright(url: str) -> dict[str, str]:
         text=True,
     )
     return json.loads(completed.stdout)
-
