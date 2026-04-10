@@ -1,5 +1,27 @@
 [
   {
+    "resume_name": "Imported from cv.md",
+    "job_title": "Software Developer Intern",
+    "company_name": "Octave",
+    "source_url": "https://careers.octave.com/job/Software-Developer-Intern/2814-en_US?utm_source=linkedin&jr_id=69cc79778130af1ac83389c6",
+    "fit_summary": "The candidate has a strong foundation in software development with experience in Java, React, and cloud computing, making them a good fit for the role.",
+    "keyword_matches": [
+      "Java",
+      "React",
+      "Cloud Computing",
+      "AWS",
+      "Software Development",
+      "REST",
+      "SOAP",
+      "Microservices"
+    ],
+    "tailored_resume_content": "# SHREY BISHNOI\n+1 (623) 498-7996 | shreybishnoi.dev@gmail.com | [LinkedIn](https://linkedin.com/in/shreybishnoi) | [GitHub](https://github.com/shreybishnoi)\n## SUMMARY\nSoftware Engineer and MS Computer Science student with 2+ years of experience in building and maintaining production backend and full-stack systems, proficient in Java, Python, and cloud computing.\n## EDUCATION\n**Arizona State University (GPA: 4.11/4.0)** | **Aug 2025 \u2013 May 2027**\n*Master of Science, Computer Science* | Tempe, AZ, USA\n**Maharaja Agrasen Institute of Technology (GPA: 3.7/4.0)** | **Aug 2019 \u2013 Jul 2023**\n*Bachelor of Science, Computer Science and Engineering* | New Delhi, India\n## SKILLS\n*   **Languages:** Java, Python, JavaScript, TypeScript, C++, SQL\n*   **Backend & APIs:** RESTful services, OOP design, data modeling, ETL pipelines, performance optimization\n*   **Frontend:** React, Vue.js-style frameworks, HTML, CSS\n*   **Databases & Systems:** PostgreSQL, MySQL, Kafka, RocksDB, Neo4j\n*   **Tools & Platforms:** Git, Docker, Kubernetes (Minikube), AWS (EC2, RDS), Linux, CI/CD\n## EXPERIENCE\n**Software Engineer | ZS Associates** | **Sep 2023 \u2013 Jun 2025**\n*   Owned and maintained 5+ production backend services using Python, Node.js, and PostgreSQL, supporting analytics workflows for 3+ product and data teams and enabling reliable data delivery at scale.\n*   Optimized data-intensive REST APIs by tuning SQL queries, adding indexes, and refactoring service logic, reducing report latency by 40% and improving overall system responsiveness.\n**Software Engineer Intern | Dreadnought School** | **Jun 2022 \u2013 Aug 2022**\n*   Implemented backend features using strong OOP principles and data structures within a client-server architecture, contributing to 10+ feature modules with clean, maintainable service design.",
+    "output_format": "markdown",
+    "cover_letter": "Dear Hiring Team,\nI am excited to apply for the Software Developer Intern position at Octave. With a strong foundation in software development and experience in Java, React, and cloud computing, I am confident in my ability to contribute to the development of the multi-tenant cloud-based Java application. I am a quick learner, and I thrive in fast-paced environments. I am excited about the opportunity to work with senior level developers and leaders to design, develop, and debug new and existing software products.\nThank you for considering my application. I look forward to discussing my qualifications further.\nSincerely,\nShrey Bishnoi",
+    "cold_email": "Subject: Application for Software Developer Intern Position\nDear Hiring Team,\nI came across the Software Developer Intern position at Octave and was impressed by the company's mission to empower organizations to make informed decisions. With my experience in Java, React, and cloud computing, I believe I would be a great fit for the role. I would love to discuss my application and how I can contribute to the development of the multi-tenant cloud-based Java application.\nBest regards,\nShrey Bishnoi",
+    "created_at": "2026-04-10T18:23:53Z"
+  },
+  {
     "resume_name": "Resume_Shrey",
     "job_title": "Software Developer Intern",
     "company_name": "Octave",
