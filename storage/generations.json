@@ -1,5 +1,100 @@
 [
   {
+    "resume_name": "Test resume",
+    "job_title": "Software Engineering Intern (Summer/Fall 2026)",
+    "company_name": "Cartesian Systems",
+    "source_url": "https://job-boards.greenhouse.io/cartesiansystems/jobs/4201825009?utm_source=Simplify&ref=Simplify",
+    "fit_summary": "Shrey's experience in software engineering, data processing, and platform development aligns well with Cartesian's needs. His work on projects like Andwemet-demo, healthcare-analytics-hub, and paperpilot showcases his skills in building scalable systems and handling large datasets. Shrey's ability to tackle complex problems and his experience with technologies like FastAPI, PyTorch, and Kubernetes make him a strong fit for this role.",
+    "keyword_matches": [
+      "platform",
+      "data",
+      "software",
+      "problems",
+      "backend",
+      "data-intensive",
+      "REST APIs",
+      "ETL pipelines",
+      "Dockerized deployments",
+      "CI/CD"
+    ],
+    "tailoring_strength": "aggressive",
+    "github_project_matches": [
+      {
+        "name": "Andwemet-demo",
+        "full_name": "shrey-Bish/Andwemet-demo",
+        "url": "https://github.com/shrey-Bish/Andwemet-demo",
+        "description": "",
+        "language": "TypeScript",
+        "topics": [],
+        "readme_excerpt": "AndWeMet \u2014 Admin CRM & Amie AI Matchmaker A full-stack Admin Dashboard prototype for the **andwemet** matchmaking platform. Built with React + Vite + TypeScript, styled using the **Cohere Enterprise Design System** (clean white canvas, 22px card radius, monochrome palette with Interaction Blue accents). --- \ud83d\ude80 Quick Start Open to see the dashboard. --- \ud83d\udccb Feature List 1. Stats Dashboard Live counters and visual breakdowns across the entire member base. | Metric | Description | |--------|----------",
+        "matched_keywords": [
+          "platform",
+          "across"
+        ],
+        "score": 5
+      },
+      {
+        "name": "healthcare-analytics-hub",
+        "full_name": "shrey-Bish/healthcare-analytics-hub",
+        "url": "https://github.com/shrey-Bish/healthcare-analytics-hub",
+        "description": "",
+        "language": "JavaScript",
+        "topics": [],
+        "readme_excerpt": "HealthCare Analytics Hub An end-to-end full-stack healthcare analytics project built for internal reporting purposes. This dashboard fetches real-world-like patient data, exposes metrics through a scalable Python API, and visualizes KPIs in a highly polished React UI, with an accompanying Power BI report for deep-dive analytics. --- \ud83d\udcf8 Showcases & Dashboards 1. React Web Application (Live Metrics) This custom-built interface demonstrates my capability to build and stitch frontends to data pipelin",
+        "matched_keywords": [
+          "data",
+          "application"
+        ],
+        "score": 5
+      },
+      {
+        "name": "shrey-bish",
+        "full_name": "shrey-Bish/shrey-bish",
+        "url": "https://github.com/shrey-Bish/shrey-bish",
+        "description": "",
+        "language": "",
+        "topics": [],
+        "readme_excerpt": "<h1 align=\"center\">Hi \ud83d\udc4b, I'm Shrey Bishnoi</h1> <p align=\"center\"> <a href=\"https://github.com/shrey-Bish\"> <img src=\"https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=25&duration=2200&pause=900&center=true&vCenter=true&color=00F9FF&width=700&lines=AI+Engineer;Data+Engineer;Software+Development+Engineer;Building+intelligent+products+with+Python+%2B+React;Always+learning%2C+building%2C+and+shipping\" /> </a> </p> <p align=\"center\"> <a href=\"https://github.com/shrey-Bish\"><img ",
+        "matched_keywords": [
+          "data",
+          "software"
+        ],
+        "score": 5
+      },
+      {
+        "name": "paperpilot",
+        "full_name": "shrey-Bish/paperpilot",
+        "url": "https://github.com/shrey-Bish/paperpilot",
+        "description": "",
+        "language": "Python",
+        "topics": [],
+        "readme_excerpt": "PaperPilot PaperPilot is a SaaS platform that turns research papers into structured analysis plus an executable sandbox. Users authenticate with Firebase, upload a PDF, trigger a multi-agent Vertex AI pipeline, review summaries and insights, ask follow-up questions, and run editable starter code in a Python sandbox. Stack - Frontend: Next.js App Router - Backend: FastAPI - AI: Google Vertex AI - Storage: Google Cloud Storage for PDFs and sandbox artifacts - Database: Firestore for users, workspa",
+        "matched_keywords": [
+          "platform"
+        ],
+        "score": 3
+      },
+      {
+        "name": "Plant-Disease-Detection",
+        "full_name": "shrey-Bish/Plant-Disease-Detection",
+        "url": "https://github.com/shrey-Bish/Plant-Disease-Detection",
+        "description": "Detect and classify plant leaf diseases using traditional image processing and machine learning \u2014 without deep learning.",
+        "language": "Jupyter Notebook",
+        "topics": [],
+        "readme_excerpt": "\ud83c\udf3f Plant Disease Detection using Classical Machine Learning > \u26a0\ufe0f **Note:** For better performance in image-based classification problems, Deep Learning (e.g., CNNs) is recommended. This project demonstrates a classical Machine Learning pipeline as a lightweight, educational alternative. --- \ud83c\udf10 Live Demo \ud83d\udc49 --- \ud83d\udccc Project Overview This project helps identify plant leaf diseases using image processing + classical machine learning techniques. It classifies uploaded apple leaf images into **Healthy** or",
+        "matched_keywords": [
+          "problems"
+        ],
+        "score": 3
+      }
+    ],
+    "tailored_resume_content": "\\documentclass[letterpaper,10pt]{article}\n\\usepackage{latexsym}\n\\usepackage[empty]{fullpage}\n\\usepackage{titlesec}\n\\usepackage{enumitem}\n\\usepackage[hidelinks]{hyperref}\n\\usepackage{fancyhdr}\n\\usepackage[english]{babel}\n\\usepackage{tabularx}\n\\usepackage{fontawesome5}\n\\pagestyle{fancy}\n\\fancyhf{}\n\\renewcommand{\\headrulewidth}{0pt}\n\\renewcommand{\\footrulewidth}{0pt}\n\n\\usepackage[margin=0.2in]{geometry}\n\\usepackage{microtype}\n\\usepackage{titlesec}\n\\usepackage{enumitem}\n\n\\setlength{\\parindent}{0pt}\n\\setlength{\\parskip}{0pt}\n\\raggedbottom\n\\linespread{0.99}\n\n\\titlespacing*{\\section}{0pt}{4pt}{3pt}\n\\titleformat{\\section}\n{\\scshape\\large\\bfseries}\n{}{0pt}{}\n[\\vspace{-2pt}\\titlerule\\vspace{3pt}]\n\n\\setlist[itemize]{\n  leftmargin=*,\n  itemsep=2pt,\n  topsep=4pt,\n  parsep=0pt,\n  partopsep=0pt\n}\n\n\\newcommand{\\resumeItem}[1]{\\item\\small{#1}}\n\\newcommand{\\resumeSubheading}[3]{%\n  \\vspace{2pt}\\item\n  \\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}\n    \\textbf{#1} & \\textbf{\\small #2} \\\\\n    \\textit{\\small #3} \\\\\n  \\end{tabular*}\\vspace{-2pt}\n}\n\\newcommand{\\resumeSubHeadingListStart}{\\begin{itemize}[leftmargin=0in, label={}]}\n\\newcommand{\\resumeSubHeadingListEnd}{\\end{itemize}}\n\\newcommand{\\resumeItemListStart}{\\begin{itemize}[leftmargin=0.15in, itemsep=2pt, topsep=4pt]}\n\\newcommand{\\resumeItemListEnd}{\\end{itemize}}\n\n\\begin{document}\n\n% ---------- Header ----------\n\\begin{center}\n    {\\Huge \\scshape Shrey Bishnoi} \\\\ \\vspace{4pt}\n    \\faPhone\\ +1 (623) 498-7996 \\quad\n    \\faEnvelope\\ sbishno2@asu.edu\n\\end{center}\n\n% ---------- Summary ----------\n\\section{Summary}\nHighly motivated and detail-oriented software engineer with experience in building scalable data pipelines, designing efficient algorithms, and developing robust software systems. Proven ability to work effectively in a team environment, communicate complex ideas clearly, and drive projects from conception to delivery. Proficient in a range of programming languages, including Python, JavaScript, and C++, with a strong foundation in data structures, algorithms, and software design patterns.\n\n% ---------- Education ----------\n\\section{Education}\n\\resumeSubHeadingListStart\n\n\\resumeSubheading\n{Arizona State University}{Aug 2025 -- May 2027}\n{Master of Science in Computer Science (CGPA: 4.11)}\n\\resumeItemListStart\n\\resumeItem{Coursework: Data Processing at Scale, Database Systems, Algorithms, Knowledge Representation}\n\\resumeItemListEnd\n\n\\resumeSubheading\n{Maharaja Agrasen Institute of Technology}{Aug 2019 -- Jul 2023}\n{Bachelor of Science in Computer Science (CGPA: 3.7)}\n\\resumeItemListStart\n\\resumeItem{Coursework: Data Structures \\& Algorithms, DBMS, Operating Systems, Computer Networks}\n\\resumeItemListEnd\n\n\\resumeSubHeadingListEnd\n\n% ---------- Experience ----------\n\\section{Experience}\n\\resumeSubHeadingListStart\n\n\\resumeSubheading\n{ZS Associates}{Sep 2023 -- Jun 2025}\n{Software Engineer}\n\\resumeItemListStart\n\\resumeItem{Designed and developed scalable data pipelines using Python, Node.js, and PostgreSQL to support analytics workflows for product and data teams.}\n\\resumeItem{Optimized data-intensive REST APIs, reducing report latency by ~40\\% through query tuning, indexing, and service refactors.}\n\\resumeItem{Built internal React dashboards to monitor system health, data freshness, and key business metrics.}\n\\resumeItem{Automated ETL pipelines in Python and SQL, cutting manual analyst effort by ~40\\%.}\n\\resumeItem{Improved reliability via log-based debugging, targeted tests, and Dockerized deployments with CI/CD.}\n\\resumeItemListEnd\n\n\\resumeSubheading\n{Coding Ninjas}{Jun 2022 -- Sep 2022}\n{Teaching Assistant}\n\\resumeItemListStart\n\\resumeItem{Assisted instructors in delivering C++ and Data Structures content to 200+ students through live sessions and forums.}\n\\resumeItem{Provided one-on-one academic support, clarified assignments, and resolved student queries promptly.}\n\\resumeItem{Reviewed and evaluated assignments while maintaining grading accuracy and clear feedback.}\n\\resumeItemListEnd\n\n\\resumeSubheading\n{Dreadnought School}{Jun 2022 -- Aug 2022}\n{Software Engineer}\n\\resumeItemListStart\n\\resumeItem{Applied OOP principles and data structures to implement backend features in a client-server architecture.}\n\\resumeItem{Designed and consumed HTTP/REST APIs, developing a strong understanding of request lifecycles and error handling.}\n\\resumeItem{Worked with PostgreSQL/MySQL to design schemas, write optimized queries, and maintain data integrity.}\n\\resumeItem{Developed responsive UI components using modern JavaScript frameworks (Vue.js-style patterns).}\n\\resumeItem{Used Git for version control and gained exposure to CI/CD, cloud deployments, and Agile workflows.}\n\\resumeItemListEnd\n\n\n\\resumeSubheading\n{Wave Society}{Oct 2019 -- Oct 2020}\n{Research Aide}\n\\resumeItemListStart\n\\resumeItem{Collected participation data, session feedback, and attendance metrics for wellness research initiatives.}\n\\resumeItem{Maintained organized records and prepared summary reports for internal review and planning.}\n\\resumeItem{Assisted with logistics and coordination for ongoing student-focused programs.}\n\\resumeItemListEnd\n\n\\resumeSubheading\n{The Education Tree}{Sep 2019 -- Feb 2020}\n{Office Aide}\n\\resumeItemListStart\n\\resumeItem{Assisted with front-desk operations including scheduling, record maintenance, and event coordination.}\n\\resumeItem{Managed student sign-ups, attendance tracking, and shared calendars using Google Workspace.}\n\\resumeItem{Drafted emails and updates regarding programs, schedules, and events.}\n\\resumeItemListEnd\n\n\\resumeSubHeadingListEnd\n\n% ---------- Skills ----------\n\\section{Skills}\n\\textbf{Programming Languages:} Python, JavaScript, C++, Java \\\\\n\\textbf{Data Management:} PostgreSQL, MySQL, MongoDB, SQL \\\\\n\\textbf{Software Development:} React, Node.js, FastAPI, REST APIs \\\\\n\\textbf{Data Analysis:} Data visualization, Data mining, Statistical analysis \\\\\n\\textbf{Operating Systems:} Windows, Linux, macOS \\\\\n\\textbf{Tools:} Git, Docker, Kubernetes, Jenkins \\\\\n\\textbf{Core Strengths:} Problem-solving, Communication, Teamwork, Time management, Adaptability\n\n% ---------- Projects ----------\n\\section{Projects}\n\\resumeSubHeadingListStart\n\n\\resumeSubheading\n{Andwemet-demo}{}\n{Admin CRM \\& Amie AI Matchmaker}\n\\resumeItemListStart\n\\resumeItem{Built a full-stack Admin Dashboard prototype for the andwemet matchmaking platform using React + Vite + TypeScript.}\n\\resumeItem{Styled the dashboard using the Cohere Enterprise Design System.}\n\\resumeItem{Developed a clean white canvas with a 22px card radius and a monochrome palette with Interaction Blue accents.}\n\\resumeItemListEnd\n\n\\resumeSubheading\n{Healthcare Analytics Hub}{}\n{End-to-end full-stack healthcare analytics project}\n\\resumeItemListStart\n\\resumeItem{Built a healthcare analytics project using JavaScript, React, and a scalable Python API.}\n\\resumeItem{Visualized KPIs in a highly polished React UI and created an accompanying Power BI report for deep-dive analytics.}\n\\resumeItem{Demonstrated data fetching from real-world-like patient data and exposed metrics through a scalable Python API.}\n\\resumeItemListEnd\n\n\\resumeSubheading\n{PaperPilot}{}\n{SaaS platform for structured analysis and executable sandbox}\n\\resumeItemListStart\n\\resumeItem{Developed a SaaS platform that turns research papers into structured analysis plus an executable sandbox.}\n\\resumeItem{Used Firebase for user authentication, Google Vertex AI for multi-agent pipelines, and Google Cloud Storage for PDFs and sandbox artifacts.}\n\\resumeItem{Built a Next.js App Router for the frontend and a FastAPI backend for data processing.}\n\\resumeItemListEnd\n\n\\resumeSubheading\n{Plant-Disease-Detection}{}\n{Classical Machine Learning pipeline for plant leaf disease detection}\n\\resumeItemListStart\n\\resumeItem{Developed a classical Machine Learning pipeline for plant leaf disease detection using image processing and traditional machine learning techniques.}\n\\resumeItem{Classified uploaded apple leaf images into Healthy or Diseased categories.}\n\\resumeItem{Demonstrated a lightweight, educational alternative to Deep Learning for image-based classification problems.}\n\\resumeItemListEnd\n\n\\resumeSubHeadingListEnd\n\n\\end{document}",
+    "output_format": "latex",
+    "cover_letter": "Dear Hiring Team,\n\nI'm excited to apply for the Software Engineering Intern position at Cartesian Systems. With a strong background in software development and data processing, I'm confident in my ability to contribute to your team. My experience with projects like Andwemet-demo and healthcare-analytics-hub has given me a solid understanding of building scalable systems and handling large datasets. I'm particularly drawn to Cartesian's work on indoor positioning and data infrastructure, and I believe my skills in FastAPI, PyTorch, and Kubernetes make me a strong fit for this role. I'm looking forward to discussing my application and how I can contribute to your team.\n\nBest regards,\nShrey Bishnoi",
+    "cold_email": "Hi Shrey,\n\nI came across your application for the Software Engineering Intern position at Cartesian Systems. I noticed that you have experience with FastAPI and PyTorch, which aligns well with our needs. I'd love to discuss your application and how you can contribute to our team. Would you be available for a call next week?\n\nBest regards,\n[Your Name]",
+    "created_at": "2026-04-10T21:22:46Z"
+  },
+  {
     "resume_name": "Base Resume",
     "job_title": "Software Engineering Intern",
     "company_name": "Cartesian Systems",
