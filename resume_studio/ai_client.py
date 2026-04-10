@@ -13,6 +13,7 @@ SYSTEM_PROMPT = """You are an expert resume strategist.
 You tailor resumes conservatively and truthfully.
 Never invent experience, tools, metrics, employers, or education.
 You may reorganize, compress, rewrite, and emphasize what already exists.
+Aim for moderate tailoring: enough JD alignment to be noticeable, but not so much that the resume stops looking like the original.
 Return only valid JSON that matches the requested schema.
 """
 
@@ -131,7 +132,11 @@ Rules:
 - Keep it a full standalone compile-ready file.
 - Preserve `\\documentclass`, the preamble, custom macros, spacing helpers, and section structure.
 - Preserve Jake-style formatting and layout if this resume uses a Jake template.
-- Make minimal edits focused on tailoring bullets, ordering, skills, summary, and keywords for the job.
+- Tailor with a moderate touch, not a rewrite.
+- Usually update the summary or top skills block, reorder the most relevant sections/projects, and rewrite roughly 3 to 6 bullets so they better match the JD.
+- Mirror important JD wording where truthful, especially for tools, domains, and responsibilities already reflected in the resume.
+- Leave clearly unrelated but valid experience alone unless space pressure makes reordering necessary.
+- Keep at least about 70 percent of the original wording and structure intact unless the source resume is extremely generic.
 - You may incorporate relevant GitHub projects only if they are supported by the provided repo metadata.
 - Do not invent experience or metrics.
 - Do not wrap the output in code fences.
@@ -200,6 +205,7 @@ Rules:
 - The cover letter should be brief, around 180-250 words.
 - The cold email should be short, practical, and personalized.
 - You may mention GitHub projects only if they are directly supported by the provided repo metadata.
+- Base the fit summary on the strongest overlaps between the JD and the tailored resume, not generic praise.
 - If company name is unclear, use "Hiring Team".
 - If role title is unclear, infer from the JD but do not overstate certainty.
 """
@@ -268,6 +274,11 @@ Rules:
 - Keep the tailored resume ATS-friendly and concise.
 - Preserve contact information from the resume when present.
 - Encode the resume content in base64 and return it in `tailored_resume_content_b64`.
+- Tailor with a moderate touch, not a rewrite.
+- Usually update the summary, skills ordering, project ordering, and roughly 3 to 6 bullets so the JD match is clear.
+- Mirror important JD wording where truthful, especially for tools, domains, and responsibilities already reflected in the source.
+- Leave most unrelated but still valuable content intact; do not aggressively replace the whole resume for one posting.
+- Keep at least about 70 percent of the original structure and wording intact unless the input is extremely generic.
 - You may incorporate relevant GitHub projects only if they are supported by the provided repo metadata.
 - If `resume_format` is `latex`, encode a full compile-ready LaTeX document in `tailored_resume_content_b64`.
 - If `resume_format` is `latex`, preserve the class, preamble, macros, and overall document structure unless a minimal safe change is necessary.
