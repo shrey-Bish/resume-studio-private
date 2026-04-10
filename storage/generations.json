@@ -1,5 +1,99 @@
 [
   {
+    "resume_name": "Base Resume",
+    "job_title": "Software Engineering Intern (Summer/Fall 2026)",
+    "company_name": "Cartesian Systems",
+    "source_url": "https://job-boards.greenhouse.io/cartesiansystems/jobs/4201825009?utm_source=Simplify&ref=Simplify",
+    "fit_summary": "Strong fit due to production engineering experience with backend services, data pipelines, and distributed systems. Relevant technical skills include Python, SQL, Kafka, Spark, Airflow, Docker, and Kubernetes.",
+    "keyword_matches": [
+      "data",
+      "software",
+      "platform",
+      "infrastructure",
+      "ML",
+      "APIs",
+      "Python",
+      "Kubernetes",
+      "data pipelines",
+      "distributed systems"
+    ],
+    "tailoring_strength": "aggressive",
+    "github_project_matches": [
+      {
+        "name": "Andwemet-demo",
+        "full_name": "shrey-Bish/Andwemet-demo",
+        "url": "https://github.com/shrey-Bish/Andwemet-demo",
+        "description": "",
+        "language": "TypeScript",
+        "topics": [],
+        "readme_excerpt": "AndWeMet \u2014 Admin CRM & Amie AI Matchmaker A full-stack Admin Dashboard prototype for the **andwemet** matchmaking platform. Built with React + Vite + TypeScript, styled using the **Cohere Enterprise Design System** (clean white canvas, 22px card radius, monochrome palette with Interaction Blue accents). --- \ud83d\ude80 Quick Start Open to see the dashboard. --- \ud83d\udccb Feature List 1. Stats Dashboard Live counters and visual breakdowns across the entire member base. | Metric | Description | |--------|----------",
+        "matched_keywords": [
+          "platform",
+          "across"
+        ],
+        "score": 5
+      },
+      {
+        "name": "shrey-bish",
+        "full_name": "shrey-Bish/shrey-bish",
+        "url": "https://github.com/shrey-Bish/shrey-bish",
+        "description": "",
+        "language": "",
+        "topics": [],
+        "readme_excerpt": "<h1 align=\"center\">Hi \ud83d\udc4b, I'm Shrey Bishnoi</h1> <p align=\"center\"> <a href=\"https://github.com/shrey-Bish\"> <img src=\"https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=25&duration=2200&pause=900&center=true&vCenter=true&color=00F9FF&width=700&lines=AI+Engineer;Data+Engineer;Software+Development+Engineer;Building+intelligent+products+with+Python+%2B+React;Always+learning%2C+building%2C+and+shipping\" /> </a> </p> <p align=\"center\"> <a href=\"https://github.com/shrey-Bish\"><img ",
+        "matched_keywords": [
+          "data",
+          "software"
+        ],
+        "score": 5
+      },
+      {
+        "name": "paperpilot",
+        "full_name": "shrey-Bish/paperpilot",
+        "url": "https://github.com/shrey-Bish/paperpilot",
+        "description": "",
+        "language": "Python",
+        "topics": [],
+        "readme_excerpt": "PaperPilot PaperPilot is a SaaS platform that turns research papers into structured analysis plus an executable sandbox. Users authenticate with Firebase, upload a PDF, trigger a multi-agent Vertex AI pipeline, review summaries and insights, ask follow-up questions, and run editable starter code in a Python sandbox. Stack - Frontend: Next.js App Router - Backend: FastAPI - AI: Google Vertex AI - Storage: Google Cloud Storage for PDFs and sandbox artifacts - Database: Firestore for users, workspa",
+        "matched_keywords": [
+          "platform"
+        ],
+        "score": 3
+      },
+      {
+        "name": "Plant-Disease-Detection",
+        "full_name": "shrey-Bish/Plant-Disease-Detection",
+        "url": "https://github.com/shrey-Bish/Plant-Disease-Detection",
+        "description": "Detect and classify plant leaf diseases using traditional image processing and machine learning \u2014 without deep learning.",
+        "language": "Jupyter Notebook",
+        "topics": [],
+        "readme_excerpt": "\ud83c\udf3f Plant Disease Detection using Classical Machine Learning > \u26a0\ufe0f **Note:** For better performance in image-based classification problems, Deep Learning (e.g., CNNs) is recommended. This project demonstrates a classical Machine Learning pipeline as a lightweight, educational alternative. --- \ud83c\udf10 Live Demo \ud83d\udc49 --- \ud83d\udccc Project Overview This project helps identify plant leaf diseases using image processing + classical machine learning techniques. It classifies uploaded apple leaf images into **Healthy** or",
+        "matched_keywords": [
+          "problems"
+        ],
+        "score": 3
+      },
+      {
+        "name": "SkillSage",
+        "full_name": "shrey-Bish/SkillSage",
+        "url": "https://github.com/shrey-Bish/SkillSage",
+        "description": "AI-powered personalized learning assistant",
+        "language": "JavaScript",
+        "topics": [],
+        "readme_excerpt": "SkillSage \ud83c\udf93\ud83d\ude80 > Your AI-powered personalized learning assistant to extract skills from text or resume, identify gaps, and generate tailored roadmaps. --- \ud83c\udf1f Features - \ud83d\udd0d **Skill Extraction**: Extracts technical skills from resume text or uploaded PDFs. - \ud83c\udfaf **Skill Gap Analysis**: Compares your skills with required skills for your target role. - \ud83d\uddfa\ufe0f **Personalized Roadmaps**: Recommends learning resources for missing skills. - \ud83d\udcc4 **PDF Upload Support**: Upload resume in PDF format for automatic parsi",
+        "matched_keywords": [
+          "technical"
+        ],
+        "score": 3
+      }
+    ],
+    "tailored_resume_content": "\\documentclass[10pt]{article}\n\\usepackage[a4paper,margin=0.2in]{geometry}\n\\usepackage{enumitem}\n\\usepackage{titlesec}\n\\usepackage{hyperref}\n\\usepackage{parskip}\n\\usepackage{fontawesome5}\n\\usepackage{xcolor}\n\\usepackage[hidelinks]{hyperref}\n\n\\newcommand{\\highlightlink}[2]{\n    \\fcolorbox{cyan}{cyan!15}{\n        \\href{#1}{\\textcolor{blue}{\\strut #2}}\n    }\n}\n\n\\hypersetup{\n    colorlinks=true,\n    urlcolor=black\n}\n\n\\titleformat{\\section}{\\large\\bfseries}{}{0em}{}[\\titlerule]\n\\titlespacing*{\\section}{0pt}{0.2em}{0.2em}\n\n\\setlist[itemize]{\n    noitemsep,\n    topsep=0pt,\n    leftmargin=*\n}\n\n\\begin{document}\n\n\\begin{center}\n    {\\LARGE \\textbf{SHREY BISHNOI}}\\\\\n    +1 (623) 498-7996 \\;|\\;\n    \\href{mailto:shreybishnoi.dev@gmail.com}{shreybishnoi.dev@gmail.com} \\;|\\;\n    \\href{https://www.linkedin.com/in/shrey-bishnoi/}{linkedin.com/in/shrey-bishnoi}\n    \\;|\\;\n    \\href{https://github.com/shrey-Bish}{github.com/shrey-Bish}\n\\end{center}\n\n\\vspace{-0.3em}\n\n\\section*{SUMMARY}\n\nResults-driven software engineer and MS Computer Science student (GPA: 4.11) at Arizona State University with 2+ years of production experience in designing backend services, data pipelines, and distributed systems. Proven track record of reducing latency by 40\\%+, automating workflows, and building scalable platforms. Skilled in Python, SQL, Kafka, Spark, Airflow, Docker, Kubernetes, and LLM-integrated tooling.\n\n\\section*{EDUCATION}\n\n\\textbf{Arizona State University (GPA: 4.11/4.0)} \\hfill Aug 2025 -- May 2027\\\\\nMaster of Science, Computer Science \\hfill Tempe, AZ, USA\n\n\\vspace{0.1em}\n\n\\textbf{Maharaja Agrasen Institute of Technology (GPA: 3.7/4.0)} \\hfill Aug 2019 -- Jul 2023\\\\\nBachelor of Science, Computer Science and Engineering \\hfill New Delhi, India\n\n\\section*{SKILLS}\n\n\\textbf{Languages:} Python, JavaScript, TypeScript, Java, C++, SQL, Scala (familiar)\\\\\n\\textbf{Data Engineering:} Apache Spark (PySpark), Apache Airflow, Kafka, ETL/ELT pipelines, dbt (familiar), data modeling\\\\\n\\textbf{Backend \\& APIs:} RESTful services, gRPC (familiar), OOP design, microservices, performance optimization\\\\\n\\textbf{Databases \\& Storage:} PostgreSQL, MySQL, RocksDB, Neo4j, Snowflake (familiar), BigQuery (familiar)\\\\\n\\textbf{Cloud \\& Infra:} AWS (S3, EC2, RDS, Lambda, EMR), Docker, Kubernetes, Linux, CI/CD (GitHub Actions, Jenkins)\\\\\n\\textbf{Frontend:} React, Next.js, Vue.js-style frameworks, HTML, CSS\\\\\n\\textbf{AI/ML:} LLM API integration, prompt engineering, Retrieval-Augmented Generation (RAG) pipelines (familiar)\\\\\n\\textbf{Mobile:} Android, Kotlin (familiar)\n\n\\section*{EXPERIENCE}\n\n\\textbf{Software Engineer $|$ ZS Associates} \\hfill Sep 2023 -- Jun 2025\n\\begin{itemize}\n    \\item Designed and owned production backend services in Python and Node.js, serving analytics workflows for cross-functional teams; reduced API response latency by \\textbf{40\\%} through SQL query optimization.\n    \\item Built and managed \\textbf{Airflow ETL pipelines} that ingested and processed 10M+ daily records, reducing manual intervention by \\textbf{40\\%} and eliminating pipeline SLA violations.\n    \\item Deployed \\textbf{PySpark jobs on AWS EMR} to parallelize batch transformations, achieving a \\textbf{3$\\times$ throughput improvement} for a critical reporting dataset.\n    \\item Developed \\textbf{React dashboards} surfacing real-time KPIs by integrating REST APIs with a PostgreSQL backend, eliminating manual reporting.\n    \\item Introduced \\textbf{CI/CD pipelines via GitHub Actions} for automated testing and deployment, reducing production errors by \\textbf{30\\%} and cutting release cycle time.\n    \\item Integrated an internal \\textbf{LLM-based summarization tool} into analytics reporting, enabling automated natural-language summaries that saved analysts \\textbf{3+ hours per sprint}.\n\\end{itemize}\n\n\\textbf{Software Engineer Intern $|$ Dreadnought School} \\hfill Jun 2022 -- Aug 2022\n\\begin{itemize}\n    \\item Delivered backend feature modules using OOP design patterns in Python/Node.js, achieving \\textbf{zero critical bugs} in QA.\n    \\item Designed and consumed REST APIs with schema-validated request/response cycles, reducing data validation errors by \\textbf{25\\%}.\n    \\item Accelerated team delivery by \\textbf{20\\%} by configuring a \\textbf{CI/CD pipeline} for a 5+ engineer team.\n\\end{itemize}\n\n\\textbf{Full-Stack Developer Intern $|$ Andwemet Pvt Ltd} \\hfill Jun 2021 -- Oct 2021\n\\begin{itemize}\n    \\item Engineered a MERN-stack customer onboarding system from scratch, serving 100+ active users and reducing onboarding completion time by \\textbf{35\\%}.\n    \\item Built and documented \\textbf{RESTful API endpoints} for user registration and onboarding-state management, increasing downstream feature adoption by \\textbf{50\\%}.\n\\end{itemize}\n\n\\section*{PROJECTS}\n\n\\textbf{LLM-Powered Knowledge Assistant $|$ Python, OpenAI API, RAG, FastAPI, PostgreSQL (pgvector)}\n\\begin{itemize}\n    \\item Built a \\textbf{Retrieval-Augmented Generation (RAG)} pipeline using OpenAI embeddings and \\textbf{pgvector} for semantic search over a 10K+ document corpus.\n    \\item Exposed the system as a \\textbf{FastAPI} REST service with streaming responses, integrating prompt engineering techniques to improve answer relevance scores.\n\\end{itemize}\n\n\\textbf{Real-Time Graph Analytics System $|$ Kafka, PySpark, RocksDB, Neo4j, Docker, Kubernetes, AWS S3}\n\\begin{itemize}\n    \\item Engineered a distributed event-streaming pipeline using \\textbf{Kafka} and \\textbf{PySpark} for high-throughput ingestion and parallel stream processing.\n    \\item Persisted processed state in \\textbf{RocksDB} and executed graph traversal algorithms in \\textbf{Neo4j} for real-time relationship analytics.\n\\end{itemize}\n\n\\textbf{Andwemet-demo $|$ TypeScript, React, Vite}\n\\begin{itemize}\n    \\item Developed a full-stack Admin CRM \\& Amie AI Matchmaker prototype using React + Vite + TypeScript.\n    \\item Designed and implemented a live stats dashboard with counters and visual breakdowns.\n\\end{itemize}\n\n\\textbf{PaperPilot $|$ Python, FastAPI, Google Vertex AI, Next.js}\n\\begin{itemize}\n    \\item Built a SaaS platform that turns research papers into structured analysis and executable sandboxes.\n    \\item Integrated user authentication with Firebase and multi-agent Vertex AI pipelines.\n\\end{itemize}\n\n\\end{document}",
+    "output_format": "latex",
+    "cover_letter": "Dear Hiring Team,\n\nI'm excited to apply for the Software Engineering Intern position at Cartesian Systems for Summer/Fall 2026. With 2+ years of production engineering experience and a strong technical background in Python, SQL, Kafka, Spark, Airflow, Docker, and Kubernetes, I'm confident in my ability to contribute to your team.\n\nMy experience designing backend services, data pipelines, and distributed systems aligns well with Cartesian's focus on spatial intelligence for indoor environments. I'm particularly drawn to the company's innovative approach to solving real-world problems in the retail industry.\n\nIn my current role as a Software Engineer at ZS Associates, I've architected and owned production backend services, built and orchestrated Airflow-managed ETL pipelines, and deployed PySpark jobs on AWS EMR. I've also delivered React dashboards and introduced CI/CD pipelines via GitHub Actions.\n\nI'm impressed by Cartesian's cutting-edge technology stack, including FastAPI, Python, Postgres, Blob Storage, Parquet, PyTorch, Ray, and Kubernetes. I'm excited about the opportunity to work on hard, real-world problems with immediate and visible impact.\n\nThank you for considering my application. I'm looking forward to discussing my qualifications further.\n\nBest regards,\nShrey Bishnoi",
+    "cold_email": "Hi Cartesian Team, I'm Shrey Bishnoi, a software engineer with experience in backend services, data pipelines, and distributed systems. I'm excited about your innovative approach to spatial intelligence in retail and believe my skills align well with your needs. I'd love to discuss how I can contribute to your team. Best, Shrey Bishnoi",
+    "created_at": "2026-04-10T21:24:14Z"
+  },
+  {
     "resume_name": "Test resume",
     "job_title": "Software Engineering Intern (Summer/Fall 2026)",
     "company_name": "Cartesian Systems",
