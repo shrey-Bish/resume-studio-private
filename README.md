@@ -12,8 +12,10 @@ It supports:
 - JD text paste or job URL scraping
 - PDF, DOCX, and Markdown downloads
 - optional GitHub-backed storage in a private repo
-- GitHub-backed storage enabled by default in Streamlit Cloud
+- GitHub-backed storage enabled by default
 - export all 3 generated documents together as a ZIP and save the pack back to GitHub
+- Render-first deployment path with Docker
+- system packages installed for future LaTeX-based resume workflows
 
 ## Run locally
 
@@ -28,26 +30,35 @@ streamlit run app.py
 
 `npm install` is needed for the Playwright-based PDF renderer and browser fallback scraper.
 
-## Storage modes
+## Deploy on Render
 
-- `Local files`: stores data in `resume_studio/data/`
-- `GitHub private repo`: stores resume and generation JSON in your private repo using a GitHub token
+This repo now includes:
 
-## GitHub Pages
+- `Dockerfile` for a containerized Render deploy
+- `render.yaml` as a Render Blueprint
+- TeX packages in the image so you can grow into a LaTeX compile flow
 
-This repo includes a static landing page in `docs/` that can be served with GitHub Pages.
-
-The full Streamlit app itself cannot run on GitHub Pages because it needs a Python backend. GitHub Pages can host the project page and instructions, but the app should be run locally or deployed on a Python host like Streamlit Community Cloud, Render, or Railway.
-
-## Deploy on Streamlit Community Cloud
+### Render setup
 
 1. Push this repo to GitHub.
-2. In Streamlit Community Cloud, create a new app from `shrey-Bish/resume-studio-private`.
-3. Set the main file path to `app.py`.
-4. Add secrets from `.streamlit/secrets.toml.example`.
+2. In Render, create a new `Blueprint` or `Web Service` from the repo.
+3. If using a Web Service manually, choose `Docker`.
+4. Add environment variables from `.streamlit/secrets.toml.example`.
 
-Notes:
+Required env vars:
 
-- `requirements.txt` is included for Streamlit Cloud.
-- The app reads `GROQ_API_KEY`, `GITHUB_REPO`, `GITHUB_BRANCH`, and `GITHUB_TOKEN` from Streamlit secrets and does not ask for them in the UI.
-- The app will still run if Node/Playwright is unavailable, but PDF downloads and browser-rendered JD scraping may be disabled there.
+- `GROQ_API_KEY`
+- `GITHUB_REPO`
+- `GITHUB_BRANCH`
+- `GITHUB_TOKEN`
+
+Render will expose a `PORT` env var automatically, and the container is already configured to use it.
+
+## Why Render
+
+Render is the preferred target for the next version because it can run a normal Dockerized Python app with system packages.
+That makes it a much better fit than Streamlit Community Cloud for:
+
+- LaTeX toolchains like `pdflatex`, `xelatex`, or `latexmk`
+- richer PDF pipelines
+- future real-time compile/preview flows for `.tex` resumes

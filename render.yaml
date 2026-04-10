@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: resume-studio-private
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11

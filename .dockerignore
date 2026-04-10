@@ -1,0 +1,9 @@
+.git
+.gitignore
+.venv-resume-studio
+node_modules
+__pycache__
+*.pyc
+.DS_Store
+storage
+resume_studio/data
