@@ -48,7 +48,7 @@ def main() -> None:
         "resumes_path": "storage/resumes.json",
         "generations_path": "storage/generations.json",
     }
-    api_key = _secret("GEMINI_API_KEY").strip()
+    api_key = _secret("GROQ_API_KEY").strip()
 
     with st.sidebar:
         st.subheader("Workspace")
@@ -57,7 +57,7 @@ def main() -> None:
 
         model = st.selectbox(
             "Model",
-            options=["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"],
+            options=["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "meta-llama/llama-4-scout-17b-16e-instruct"],
             index=0,
         )
 
@@ -73,7 +73,7 @@ def main() -> None:
         return
 
     if not api_key:
-        st.error("Add `GEMINI_API_KEY` to Streamlit secrets to generate tailored documents.")
+        st.error("Add `GROQ_API_KEY` to Streamlit secrets to generate tailored documents.")
         return
 
     if DEFAULT_CV_PATH.exists():
@@ -169,7 +169,7 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
 
     if st.button("Generate tailored pack", type="primary"):
         if not api_key:
-            st.error("Add your Gemini API key in Streamlit secrets.")
+            st.error("Add your Groq API key in Streamlit secrets.")
             return
 
         if not job_url.strip() and not job_text.strip():
