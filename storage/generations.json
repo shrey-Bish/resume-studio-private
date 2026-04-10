@@ -4,6 +4,28 @@
     "job_title": "Software Developer Intern",
     "company_name": "Octave",
     "source_url": "https://careers.octave.com/job/Software-Developer-Intern/2814-en_US?utm_source=linkedin&jr_id=69cc79778130af1ac83389c6",
+    "fit_summary": "The candidate has a strong background in software development, with experience in Java, React, and microservices. They also have knowledge of cloud computing, specifically AWS, and familiarity with tools such as Jira, GIT, and Maven. Their skills and experience align well with the job requirements, making them a strong fit for the position.",
+    "keyword_matches": [
+      "Java",
+      "React",
+      "microservices",
+      "AWS",
+      "cloud computing",
+      "Jira",
+      "GIT",
+      "Maven"
+    ],
+    "tailored_resume_content": "",
+    "output_format": "latex",
+    "cover_letter": "Dear Hiring Team, I am excited to apply for the Software Developer Intern position at Octave. With a strong background in software development and a passion for learning, I am confident that I would be a valuable addition to your team. My experience with Java, React, and microservices has prepared me well for this role, and I am eager to contribute to the development of Octave's software products. I am particularly drawn to Octave's mission-critical software and its impact on organizations. I am a self-motivated and results-oriented individual with strong problem-solving abilities and excellent communication skills. I am excited about the opportunity to work with a talented team and contribute to the success of Octave. Thank you for considering my application. Sincerely, Shrey Bishnoi",
+    "cold_email": "Hi Octave Team, I came across the Software Developer Intern position on your website and was impressed by the company's mission-critical software. With my background in software development and experience with Java, React, and microservices, I believe I would be a strong fit for the role. I would love to discuss my application and how I can contribute to Octave's success. Best, Shrey Bishnoi",
+    "created_at": "2026-04-10T18:47:48Z"
+  },
+  {
+    "resume_name": "test resume",
+    "job_title": "Software Developer Intern",
+    "company_name": "Octave",
+    "source_url": "https://careers.octave.com/job/Software-Developer-Intern/2814-en_US?utm_source=linkedin&jr_id=69cc79778130af1ac83389c6",
     "fit_summary": "Highly motivated MS Computer Science student with 2+ years of production engineering experience, skilled in Java, Python, and cloud-native technologies, seeking a Software Developer Intern role at Octave.",
     "keyword_matches": [
       "Java",
