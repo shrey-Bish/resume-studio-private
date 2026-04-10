@@ -1,6 +1,95 @@
 [
   {
     "resume_name": "Base Resume",
+    "job_title": "Software Engineering Intern",
+    "company_name": "Cartesian Systems",
+    "source_url": "https://job-boards.greenhouse.io/cartesiansystems/jobs/4201825009?utm_source=Simplify&ref=Simplify",
+    "fit_summary": "As a skilled software engineer with experience in designing backend services, data pipelines, and distributed systems, I am confident in my ability to contribute to Cartesian Systems' mission. My proficiency in languages such as Python, SQL, and JavaScript, as well as my experience with data engineering tools like Apache Spark and Apache Airflow, align with the company's technology stack.",
+    "keyword_matches": [
+      "platform",
+      "data",
+      "application",
+      "software",
+      "problems"
+    ],
+    "github_project_matches": [
+      {
+        "name": "Andwemet-demo",
+        "full_name": "shrey-Bish/Andwemet-demo",
+        "url": "https://github.com/shrey-Bish/Andwemet-demo",
+        "description": "",
+        "language": "TypeScript",
+        "topics": [],
+        "readme_excerpt": "AndWeMet \u2014 Admin CRM & Amie AI Matchmaker A full-stack Admin Dashboard prototype for the **andwemet** matchmaking platform. Built with React + Vite + TypeScript, styled using the **Cohere Enterprise Design System** (clean white canvas, 22px card radius, monochrome palette with Interaction Blue accents). --- \ud83d\ude80 Quick Start Open to see the dashboard. --- \ud83d\udccb Feature List 1. Stats Dashboard Live counters and visual breakdowns across the entire member base. | Metric | Description | |--------|----------",
+        "matched_keywords": [
+          "platform",
+          "across"
+        ],
+        "score": 5
+      },
+      {
+        "name": "healthcare-analytics-hub",
+        "full_name": "shrey-Bish/healthcare-analytics-hub",
+        "url": "https://github.com/shrey-Bish/healthcare-analytics-hub",
+        "description": "",
+        "language": "JavaScript",
+        "topics": [],
+        "readme_excerpt": "HealthCare Analytics Hub An end-to-end full-stack healthcare analytics project built for internal reporting purposes. This dashboard fetches real-world-like patient data, exposes metrics through a scalable Python API, and visualizes KPIs in a highly polished React UI, with an accompanying Power BI report for deep-dive analytics. --- \ud83d\udcf8 Showcases & Dashboards 1. React Web Application (Live Metrics) This custom-built interface demonstrates my capability to build and stitch frontends to data pipelin",
+        "matched_keywords": [
+          "data",
+          "application"
+        ],
+        "score": 5
+      },
+      {
+        "name": "shrey-bish",
+        "full_name": "shrey-Bish/shrey-bish",
+        "url": "https://github.com/shrey-Bish/shrey-bish",
+        "description": "",
+        "language": "",
+        "topics": [],
+        "readme_excerpt": "<h1 align=\"center\">Hi \ud83d\udc4b, I'm Shrey Bishnoi</h1> <p align=\"center\"> <a href=\"https://github.com/shrey-Bish\"> <img src=\"https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=25&duration=2200&pause=900&center=true&vCenter=true&color=00F9FF&width=700&lines=AI+Engineer;Data+Engineer;Software+Development+Engineer;Building+intelligent+products+with+Python+%2B+React;Always+learning%2C+building%2C+and+shipping\" /> </a> </p> <p align=\"center\"> <a href=\"https://github.com/shrey-Bish\"><img ",
+        "matched_keywords": [
+          "data",
+          "software"
+        ],
+        "score": 5
+      },
+      {
+        "name": "paperpilot",
+        "full_name": "shrey-Bish/paperpilot",
+        "url": "https://github.com/shrey-Bish/paperpilot",
+        "description": "",
+        "language": "Python",
+        "topics": [],
+        "readme_excerpt": "PaperPilot PaperPilot is a SaaS platform that turns research papers into structured analysis plus an executable sandbox. Users authenticate with Firebase, upload a PDF, trigger a multi-agent Vertex AI pipeline, review summaries and insights, ask follow-up questions, and run editable starter code in a Python sandbox. Stack - Frontend: Next.js App Router - Backend: FastAPI - AI: Google Vertex AI - Storage: Google Cloud Storage for PDFs and sandbox artifacts - Database: Firestore for users, workspa",
+        "matched_keywords": [
+          "platform"
+        ],
+        "score": 3
+      },
+      {
+        "name": "Plant-Disease-Detection",
+        "full_name": "shrey-Bish/Plant-Disease-Detection",
+        "url": "https://github.com/shrey-Bish/Plant-Disease-Detection",
+        "description": "Detect and classify plant leaf diseases using traditional image processing and machine learning \u2014 without deep learning.",
+        "language": "Jupyter Notebook",
+        "topics": [],
+        "readme_excerpt": "\ud83c\udf3f Plant Disease Detection using Classical Machine Learning > \u26a0\ufe0f **Note:** For better performance in image-based classification problems, Deep Learning (e.g., CNNs) is recommended. This project demonstrates a classical Machine Learning pipeline as a lightweight, educational alternative. --- \ud83c\udf10 Live Demo \ud83d\udc49 --- \ud83d\udccc Project Overview This project helps identify plant leaf diseases using image processing + classical machine learning techniques. It classifies uploaded apple leaf images into **Healthy** or",
+        "matched_keywords": [
+          "problems"
+        ],
+        "score": 3
+      }
+    ],
+    "tailored_resume_content": "\\documentclass[10pt]{article}\n\\usepackage[a4paper,margin=0.2in]{geometry}\n\\usepackage{enumitem}\n\\usepackage{titlesec}\n\\usepackage{hyperref}\n\\usepackage{parskip}\n\\usepackage{fontawesome5}\n\\usepackage{xcolor}\n\\usepackage[hidelinks]{hyperref}\n\n\\newcommand{\\highlightlink}[2]{\n    \\fcolorbox{cyan}{cyan!15}{\n        \\href{#1}{\\textcolor{blue}{\\strut #2}}\n    }\n}\n\n\\hypersetup{\n    colorlinks=true,\n    urlcolor=black\n}\n\n\\titleformat{\\section}{\\large\\bfseries}{}{0em}{}[\\titlerule]\n\\titlespacing*{\\section}{0pt}{0.2em}{0.2em}\n\n\\setlist[itemize]{\n    noitemsep,\n    topsep=0pt,\n    leftmargin=*\n}\n\n\\begin{document}\n\n\\begin{center}\n    {\\LARGE \\textbf{SHREY BISHNOI}}\\\\\n    +1 (623) 498-7996 \\;|\\;\n    \\href{mailto:shreybishnoi.dev@gmail.com}{shreybishnoi.dev@gmail.com} \\;|\\;\n    \\href{https://www.linkedin.com/in/shrey-bishnoi/}{linkedin.com/in/shrey-bishnoi}\n    \\;|\\;\n    \\href{https://github.com/shrey-Bish}{github.com/shrey-Bish}\n\\end{center}\n\n\\vspace{-0.3em}\n\n\\section*{SUMMARY}\n\nMS Computer Science student (GPA: 4.11) at Arizona State University with 2+ years of production engineering experience designing backend services, data pipelines, and distributed systems. Proven track record of reducing latency by 40\\%+ and automating workflows that saved hundreds of engineering hours. Skilled in Python, SQL, Kafka, Spark, Airflow, Docker, and Kubernetes, with hands-on exposure to LLM-integrated tooling and cloud-native data architectures. Excited about tackling indoor positioning, data infrastructure, and ML in production challenges.\n\n\\section*{EDUCATION}\n\n\\textbf{Arizona State University (GPA: 4.11/4.0)} \\hfill Aug 2025 -- May 2027\\\\\nMaster of Science, Computer Science \\hfill Tempe, AZ, USA\n\n\\vspace{0.1em}\n\n\\textbf{Maharaja Agrasen Institute of Technology (GPA: 3.7/4.0)} \\hfill Aug 2019 -- Jul 2023\\\\\nBachelor of Science, Computer Science and Engineering \\hfill New Delhi, India\n\n\\section*{SKILLS}\n\n\\textbf{Languages:} Python, JavaScript, TypeScript, Java, C++, SQL, Scala (familiar)\\\\\n\\textbf{Data Engineering:} Apache Spark (PySpark), Apache Airflow, Kafka, ETL/ELT pipelines, dbt (familiar), data modeling\\\\\n\\textbf{Backend \\& APIs:} RESTful services, gRPC (familiar), OOP design, microservices, performance optimization, FastAPI\\\\\n\\textbf{Databases \\& Storage:} PostgreSQL, MySQL, RocksDB, Neo4j, Snowflake (familiar), BigQuery (familiar), Blob Storage, Parquet\\\\\n\\textbf{Cloud \\& Infra:} AWS (S3, EC2, RDS, Lambda, EMR), Docker, Kubernetes, Linux, CI/CD (GitHub Actions, Jenkins), Azure\\\\\n\\textbf{Frontend:} React, Next.js, Vue.js-style frameworks, HTML, CSS, Tailwind\\\\\n\\textbf{AI/ML:} LLM API integration, prompt engineering, Retrieval-Augmented Generation (RAG) pipelines (familiar), PyTorch, Ray\\\\\n\\textbf{Mobile:} Android, Kotlin\n\n\\section*{EXPERIENCE}\n\n\\textbf{Software Engineer $|$ ZS Associates} \\hfill Sep 2023 -- Jun 2025\n\\begin{itemize}\n    \\item Architected and owned 5+ production backend services in Python and Node.js backed by PostgreSQL, serving analytics workflows for 3+ cross-functional teams; reduced average API response latency by \\textbf{40\\%} through targeted SQL query optimization.\n    \\item Built and orchestrated \\textbf{Airflow-managed ETL pipelines} that ingested, transformed, and delivered 10M+ daily records across internal data systems, reducing manual analyst intervention by \\textbf{40\\%} and cutting pipeline SLA violations from weekly to zero.\n    \\item Deployed \\textbf{PySpark jobs on AWS EMR} to parallelize large-scale batch transformations, achieving a \\textbf{3$\\times$ throughput improvement} over single-node processing for a critical reporting dataset used by executive stakeholders.\n    \\item Delivered \\textbf{3+ React dashboards} surfacing real-time KPIs (data freshness, pipeline health, SLA status) by integrating REST APIs with a PostgreSQL backend and caching layer, eliminating 6+ hours of weekly manual reporting.\n    \\item Introduced \\textbf{CI/CD pipelines via GitHub Actions} for automated testing and deployment of backend services, reducing production deployment errors by \\textbf{30\\%} and cutting release cycle time from days to hours.\n    \\item Integrated an internal \\textbf{LLM-based summarization tool} into the analytics reporting workflow using the OpenAI API, enabling automated natural-language summaries of KPI dashboards that saved analysts \\textbf{3+ hours per sprint}.\n    \\item Modeled and maintained relational schemas in \\textbf{PostgreSQL and Snowflake} supporting multi-tenant data delivery, enforcing referential integrity and implementing row-level access controls for 3+ product verticals.\n\\end{itemize}\n\n\\textbf{Software Engineer Intern $|$ Dreadnought School} \\hfill Jun 2022 -- Aug 2022\n\\begin{itemize}\n    \\item Delivered 10+ backend feature modules using OOP design patterns within a Python/Node.js client--server architecture, achieving \\textbf{zero critical bugs} in QA across all shipped modules.\n    \\item Designed and consumed REST APIs with schema-validated request/response cycles across PostgreSQL and MySQL, reducing data validation errors by \\textbf{25\\%} through centralized error-handling middleware.\n    \\item Accelerated team delivery by \\textbf{20\\%} by configuring a \\textbf{CI/CD pipeline} (automated test runs + Docker-based staging deploys) for a 5+ engineer team, reducing integration conflicts on shared branches.\n\\end{itemize}\n\n\\textbf{Full-Stack Developer Intern $|$ Andwemet Pvt Ltd} \\hfill Jun 2021 -- Oct 2021\n\\begin{itemize}\n    \\item Engineered a MERN-stack customer onboarding system from scratch that served 100+ active users, reducing onboarding completion time by \\textbf{35\\%} through iterative UX refinements and backend caching improvements.\n    \\item Built and documented \\textbf{RESTful API endpoints} for user registration, validation, and onboarding-state management, increasing downstream feature adoption by \\textbf{50\\%} as measured via user interaction analytics.\n\n\\end{itemize}\n\n\\section*{PROJECTS}\n\n\\textbf{AndWeMet Demo $|$ TypeScript, React, Vite}\n\\begin{itemize}\n    \\item Developed a full-stack Admin Dashboard prototype for the AndWeMet matchmaking platform, showcasing expertise in building scalable and maintainable frontend applications.\n\\end{itemize}\n\n\\textbf{Healthcare Analytics Hub $|$ JavaScript, React, Python}\n\\begin{itemize}\n    \\item Built an end-to-end full-stack healthcare analytics project, demonstrating capabilities in data ingestion, processing, and visualization, as well as experience with scalable Python APIs and React UI components.\n\\end{itemize}\n\n\\textbf{PaperPilot $|$ Python, FastAPI, OpenAI API, Google Vertex AI}\n\\begin{itemize}\n    \\item Created a SaaS platform that turns research papers into structured analysis plus an executable sandbox, showcasing expertise in natural language processing, machine learning, and cloud-native architectures.\n\\end{itemize}\n\n\\end{document}",
+    "output_format": "latex",
+    "cover_letter": "Dear Hiring Team, I am excited to apply for the Software Engineering Intern position at Cartesian Systems. With a strong background in computer science and experience in software development, I am confident in my ability to make a valuable contribution to your team. My experience with data engineering, backend services, and distributed systems has prepared me to tackle the challenges of scaling a platform that processes billions of wireless signal readings. I am particularly drawn to Cartesian Systems' mission to drive operational efficiency in the retail industry through spatial intelligence. I am impressed by the company's innovative approach to indoor positioning and its potential to make a significant impact on the industry. I would welcome the opportunity to discuss my application and how my skills and experience align with the company's needs. Thank you for considering my application.",
+    "cold_email": "Subject: Application for Software Engineering Intern Position Dear Cartesian Systems Team, I came across the Software Engineering Intern position on your website and was impressed by the company's innovative approach to indoor positioning. With my background in computer science and experience in software development, I believe I would be a strong fit for the role. I would love to discuss my application and how my skills align with the company's needs. Best regards, Shrey Bishnoi",
+    "created_at": "2026-04-10T21:09:22Z"
+  },
+  {
+    "resume_name": "Base Resume",
     "job_title": "Software Developer Intern",
     "company_name": "Octave",
     "source_url": "https://careers.octave.com/job/Software-Developer-Intern/2814-en_US?utm_source=linkedin&jr_id=69cc79778130af1ac83389c6",
