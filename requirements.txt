@@ -1,5 +1,5 @@
 streamlit>=1.44.0
-openai>=1.75.0
+google-genai>=1.0.0
 requests>=2.31.0
 beautifulsoup4>=4.12.3
 pypdf>=5.4.0

@@ -47,7 +47,7 @@ def main() -> None:
         "resumes_path": "storage/resumes.json",
         "generations_path": "storage/generations.json",
     }
-    api_key = _secret("OPENAI_API_KEY").strip()
+    api_key = _secret("GEMINI_API_KEY").strip()
 
     with st.sidebar:
         st.subheader("Workspace")
@@ -56,7 +56,7 @@ def main() -> None:
 
         model = st.selectbox(
             "Model",
-            options=["gpt-4.1-mini", "gpt-4.1", "gpt-4o-mini"],
+            options=["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"],
             index=0,
         )
 
@@ -74,7 +74,7 @@ def main() -> None:
         return
 
     if not api_key:
-        st.error("Add `OPENAI_API_KEY` to Streamlit secrets to generate tailored documents.")
+        st.error("Add `GEMINI_API_KEY` to Streamlit secrets to generate tailored documents.")
         return
 
     if DEFAULT_CV_PATH.exists():

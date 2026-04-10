@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from typing import Any
 
-from openai import OpenAI
+from google import genai
+from google.genai import types
 
 
 SYSTEM_PROMPT = """You are an expert resume strategist.
@@ -25,7 +27,8 @@ def generate_application_pack(
     job_url: str,
     user_notes: str,
 ) -> dict[str, Any]:
-    client = OpenAI(api_key=api_key)
+    os.environ["GEMINI_API_KEY"] = api_key
+    client = genai.Client()
 
     prompt = f"""
 Create a tailored application pack for the candidate below.
@@ -68,15 +71,16 @@ Rules:
 - If role title is unclear, infer from the JD but do not overstate certainty.
 """
 
-    response = client.responses.create(
+    response = client.models.generate_content(
         model=model,
-        input=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+            temperature=0.2,
+        ),
     )
 
-    content = response.output_text.strip()
+    content = (response.text or "").strip()
     return _parse_json(content)
 
 
@@ -88,4 +92,3 @@ def _parse_json(content: str) -> dict[str, Any]:
         if not match:
             raise ValueError("The model did not return valid JSON.")
         return json.loads(match.group(0))
-
