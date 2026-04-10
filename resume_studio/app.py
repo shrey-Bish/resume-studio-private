@@ -265,7 +265,12 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
     resume_format = str(generation.get("output_format", "markdown"))
     slug = _slugify(f"{generation['company_name']}-{generation['job_title']}")
     compile_key = f"{slug}-{generation.get('created_at', 'latest')}"
-    compiled_pdf = _ensure_compiled_pdf(compile_key, resume_format, resume_content)
+    editor_key = f"{compile_key}-latex-editor"
+    if resume_format == "latex" and editor_key not in st.session_state:
+        st.session_state[editor_key] = resume_content
+
+    current_resume_content = st.session_state.get(editor_key, resume_content) if resume_format == "latex" else resume_content
+    compiled_pdf = _ensure_compiled_pdf(compile_key, resume_format, current_resume_content)
 
     st.markdown("#### Export Pack")
     export_format = st.radio(
@@ -283,7 +288,7 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
     pack_files = _bundle_files(
         slug,
         export_format,
-        resume_content,
+        current_resume_content,
         cover_letter,
         cold_email,
         resume_format=resume_format,
@@ -307,13 +312,32 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
     with col1:
         st.markdown("#### Tailored Resume")
         if resume_format == "latex":
-            st.text_area("Tailored LaTeX", value=resume_content, height=320)
-            is_valid_latex, latex_message = validate_latex_source(resume_content)
+            st.text_area("Tailored LaTeX", height=320, key=editor_key)
+            is_valid_latex, latex_message = validate_latex_source(st.session_state.get(editor_key, ""))
             if not is_valid_latex:
                 st.warning(latex_message)
+            compile_col1, compile_col2 = st.columns(2)
+            with compile_col1:
+                if st.button("Recompile edited LaTeX", key=f"{compile_key}-recompile", type="primary"):
+                    _compile_latex_to_session(compile_key, st.session_state.get(editor_key, ""))
+                    st.rerun()
+            with compile_col2:
+                if compiled_pdf is not None and st.button("Save final PDFs to GitHub", key=f"{compile_key}-save-final"):
+                    final_folder = f"exports/{slug}-{generation['created_at'].replace(':', '-').replace('T', '_').replace('Z', '')}-final"
+                    final_pack = _bundle_files(
+                        slug,
+                        "compiled-pdf",
+                        st.session_state.get(editor_key, ""),
+                        cover_letter,
+                        cold_email,
+                        resume_format=resume_format,
+                        compiled_resume_pdf=compiled_pdf,
+                    )
+                    saved_paths = persist_export_bundle(storage_config, final_folder, final_pack)
+                    st.success("Saved final PDF pack to GitHub:\n" + "\n".join(saved_paths))
             st.download_button(
                 "Download resume (.tex)",
-                data=resume_content.encode("utf-8"),
+                data=st.session_state.get(editor_key, "").encode("utf-8"),
                 file_name=f"{slug}-resume.tex",
                 mime="application/x-tex",
             )
@@ -481,15 +505,21 @@ def _ensure_compiled_pdf(cache_key: str, resume_format: str, resume_content: str
         return None
     pdf_key = f"{cache_key}-compiled-pdf"
     error_key = f"{cache_key}-compile-error"
+    content_key = f"{cache_key}-compiled-source"
+    if st.session_state.get(content_key) != resume_content:
+        st.session_state.pop(pdf_key, None)
+        st.session_state.pop(error_key, None)
     if pdf_key in st.session_state:
         return st.session_state[pdf_key]
     try:
         compiled_pdf, _ = compile_latex_source(resume_content, jobname="resume")
         st.session_state[pdf_key] = compiled_pdf
+        st.session_state[content_key] = resume_content
         st.session_state.pop(error_key, None)
         return compiled_pdf
     except Exception as exc:  # noqa: BLE001
         st.session_state[error_key] = str(exc)
+        st.session_state[content_key] = resume_content
         return None
 
 
@@ -500,6 +530,21 @@ def _export_options(resume_format: str, has_compiled_pdf: bool) -> list[str]:
             options.insert(0, "compiled-pdf")
         return options
     return ["pdf", "docx", "md"]
+
+
+def _compile_latex_to_session(cache_key: str, resume_content: str) -> None:
+    pdf_key = f"{cache_key}-compiled-pdf"
+    error_key = f"{cache_key}-compile-error"
+    content_key = f"{cache_key}-compiled-source"
+    try:
+        compiled_pdf, _ = compile_latex_source(resume_content, jobname="resume")
+        st.session_state[pdf_key] = compiled_pdf
+        st.session_state[content_key] = resume_content
+        st.session_state.pop(error_key, None)
+    except Exception as exc:  # noqa: BLE001
+        st.session_state.pop(pdf_key, None)
+        st.session_state[content_key] = resume_content
+        st.session_state[error_key] = str(exc)
 
 
 if __name__ == "__main__":
