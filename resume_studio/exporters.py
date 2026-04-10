@@ -6,11 +6,6 @@ from html import escape
 from io import BytesIO
 
 from docx import Document
-from reportlab.lib.colors import HexColor
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.lib.units import inch
-from reportlab.platypus import ListFlowable, ListItem, Paragraph, SimpleDocTemplate, Spacer
 
 
 def markdown_bytes(value: str) -> bytes:
@@ -47,48 +42,54 @@ def docx_bytes(title: str, body: str) -> bytes:
 
 
 def pdf_bytes(title: str, body: str) -> bytes:
-    buffer = BytesIO()
-    document = SimpleDocTemplate(
-        buffer,
-        pagesize=A4,
-        leftMargin=0.55 * inch,
-        rightMargin=0.55 * inch,
-        topMargin=0.55 * inch,
-        bottomMargin=0.55 * inch,
-    )
-    styles = _pdf_styles()
-    story = [Paragraph(_escape_pdf(title), styles["title"]), Spacer(1, 10)]
+    reportlab = _load_reportlab()
 
-    bullet_items: list[ListItem] = []
+    buffer = BytesIO()
+    document = reportlab["SimpleDocTemplate"](
+        buffer,
+        pagesize=reportlab["A4"],
+        leftMargin=0.55 * reportlab["inch"],
+        rightMargin=0.55 * reportlab["inch"],
+        topMargin=0.55 * reportlab["inch"],
+        bottomMargin=0.55 * reportlab["inch"],
+    )
+    styles = _pdf_styles(reportlab)
+    story = [reportlab["Paragraph"](_escape_pdf(title), styles["title"]), reportlab["Spacer"](1, 10)]
+
+    bullet_items: list[object] = []
     for raw_line in body.splitlines():
         line = raw_line.strip()
         if not line:
             if bullet_items:
-                story.append(ListFlowable(bullet_items, bulletType="bullet", leftIndent=18))
+                story.append(reportlab["ListFlowable"](bullet_items, bulletType="bullet", leftIndent=18))
                 bullet_items = []
-            story.append(Spacer(1, 6))
+            story.append(reportlab["Spacer"](1, 6))
             continue
 
         if line.startswith("- "):
-            bullet_items.append(ListItem(Paragraph(_format_pdf_inline(line[2:].strip()), styles["body"])))
+            bullet_items.append(
+                reportlab["ListItem"](
+                    reportlab["Paragraph"](_format_pdf_inline(line[2:].strip()), styles["body"])
+                )
+            )
             continue
 
         if bullet_items:
-            story.append(ListFlowable(bullet_items, bulletType="bullet", leftIndent=18))
+            story.append(reportlab["ListFlowable"](bullet_items, bulletType="bullet", leftIndent=18))
             bullet_items = []
 
         if line.startswith("# "):
-            story.append(Paragraph(_escape_pdf(line[2:].strip()), styles["h1"]))
+            story.append(reportlab["Paragraph"](_escape_pdf(line[2:].strip()), styles["h1"]))
         elif line.startswith("## "):
-            story.append(Paragraph(_escape_pdf(line[3:].strip()), styles["h2"]))
+            story.append(reportlab["Paragraph"](_escape_pdf(line[3:].strip()), styles["h2"]))
         elif line.startswith("### "):
-            story.append(Paragraph(_escape_pdf(line[4:].strip()), styles["h3"]))
+            story.append(reportlab["Paragraph"](_escape_pdf(line[4:].strip()), styles["h3"]))
         else:
-            story.append(Paragraph(_format_pdf_inline(line), styles["body"]))
-        story.append(Spacer(1, 4))
+            story.append(reportlab["Paragraph"](_format_pdf_inline(line), styles["body"]))
+        story.append(reportlab["Spacer"](1, 4))
 
     if bullet_items:
-        story.append(ListFlowable(bullet_items, bulletType="bullet", leftIndent=18))
+        story.append(reportlab["ListFlowable"](bullet_items, bulletType="bullet", leftIndent=18))
 
     document.build(story)
     buffer.seek(0)
@@ -96,7 +97,11 @@ def pdf_bytes(title: str, body: str) -> bytes:
 
 
 def pdf_export_supported() -> bool:
-    return True
+    try:
+        _load_reportlab()
+        return True
+    except ModuleNotFoundError:
+        return False
 
 
 def _format_inline(value: str) -> str:
@@ -124,55 +129,55 @@ def zip_bytes(files: list[tuple[str, bytes]]) -> bytes:
     return buffer.read()
 
 
-def _pdf_styles() -> dict[str, ParagraphStyle]:
-    base = getSampleStyleSheet()
+def _pdf_styles(reportlab: dict[str, object]) -> dict[str, object]:
+    base = reportlab["getSampleStyleSheet"]()
     return {
-        "title": ParagraphStyle(
+        "title": reportlab["ParagraphStyle"](
             "Title",
             parent=base["Title"],
             fontName="Helvetica-Bold",
             fontSize=18,
             leading=22,
-            textColor=HexColor("#0f766e"),
+            textColor=reportlab["HexColor"]("#0f766e"),
             spaceAfter=8,
         ),
-        "h1": ParagraphStyle(
+        "h1": reportlab["ParagraphStyle"](
             "H1",
             parent=base["Heading1"],
             fontName="Helvetica-Bold",
             fontSize=16,
             leading=20,
-            textColor=HexColor("#172033"),
+            textColor=reportlab["HexColor"]("#172033"),
             spaceBefore=8,
             spaceAfter=6,
         ),
-        "h2": ParagraphStyle(
+        "h2": reportlab["ParagraphStyle"](
             "H2",
             parent=base["Heading2"],
             fontName="Helvetica-Bold",
             fontSize=12,
             leading=16,
-            textColor=HexColor("#172033"),
+            textColor=reportlab["HexColor"]("#172033"),
             spaceBefore=8,
             spaceAfter=4,
         ),
-        "h3": ParagraphStyle(
+        "h3": reportlab["ParagraphStyle"](
             "H3",
             parent=base["Heading3"],
             fontName="Helvetica-Bold",
             fontSize=10.5,
             leading=14,
-            textColor=HexColor("#172033"),
+            textColor=reportlab["HexColor"]("#172033"),
             spaceBefore=6,
             spaceAfter=3,
         ),
-        "body": ParagraphStyle(
+        "body": reportlab["ParagraphStyle"](
             "Body",
             parent=base["BodyText"],
             fontName="Helvetica",
             fontSize=10.5,
             leading=14,
-            textColor=HexColor("#172033"),
+            textColor=reportlab["HexColor"]("#172033"),
         ),
     }
 
@@ -190,3 +195,24 @@ def _escape_pdf(value: str) -> str:
         .replace("<", "&lt;")
         .replace(">", "&gt;")
     )
+
+
+def _load_reportlab() -> dict[str, object]:
+    from reportlab.lib.colors import HexColor
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+    from reportlab.lib.units import inch
+    from reportlab.platypus import ListFlowable, ListItem, Paragraph, SimpleDocTemplate, Spacer
+
+    return {
+        "HexColor": HexColor,
+        "A4": A4,
+        "ParagraphStyle": ParagraphStyle,
+        "getSampleStyleSheet": getSampleStyleSheet,
+        "inch": inch,
+        "ListFlowable": ListFlowable,
+        "ListItem": ListItem,
+        "Paragraph": Paragraph,
+        "SimpleDocTemplate": SimpleDocTemplate,
+        "Spacer": Spacer,
+    }
