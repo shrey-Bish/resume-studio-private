@@ -1,5 +1,6 @@
-from resume_studio.app import main
+import importlib
 
 
 if __name__ == "__main__":
-    main()
+    app_module = importlib.import_module("resume_studio.app")
+    app_module.main()

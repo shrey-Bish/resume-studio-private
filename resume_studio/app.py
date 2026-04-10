@@ -22,9 +22,7 @@ from resume_studio.storage import (
     persist_export_bundle,
     persist_generation,
     persist_resume,
-    seed_resume_if_missing_remote,
 )
-DEFAULT_CV_PATH = ROOT_DIR / "cv.md"
 
 
 st.set_page_config(
@@ -79,14 +77,6 @@ def main() -> None:
         st.error("Add `GROQ_API_KEY` to Streamlit secrets to generate tailored documents.")
         return
 
-    if DEFAULT_CV_PATH.exists():
-        seed_resume_if_missing_remote(
-            storage_config=storage_config,
-            name="Imported from cv.md",
-            source_filename="cv.md",
-            text=DEFAULT_CV_PATH.read_text(encoding="utf-8"),
-        )
-
     tab_library, tab_generate, tab_history = st.tabs(["Resume Library", "Tailor for a Job", "Recent Generations"])
 
     with tab_library:
@@ -101,6 +91,7 @@ def main() -> None:
 
 def render_resume_library(storage_config: dict[str, str]) -> None:
     st.subheader("Base Resume Library")
+    st.markdown("Upload files or paste raw LaTeX and save it as a resume variant.")
     uploads = st.file_uploader(
         "Upload resumes",
         type=["pdf", "docx", "doc", "txt", "md", "tex"],
@@ -137,6 +128,30 @@ def render_resume_library(storage_config: dict[str, str]) -> None:
                     )
                     st.success(f"Saved {custom_name}")
                     st.rerun()
+
+    with st.expander("Paste LaTeX resume", expanded=False):
+        pasted_name = st.text_input("Resume label", value="latex-resume", key="pasted-latex-name")
+        pasted_filename = st.text_input("Source filename", value="resume.tex", key="pasted-latex-filename")
+        pasted_latex = st.text_area(
+            "Paste LaTeX source",
+            height=260,
+            placeholder="Paste your full .tex resume source here...",
+            key="pasted-latex-content",
+        )
+        if st.button("Save pasted LaTeX", type="primary", key="save-pasted-latex"):
+            if not pasted_latex.strip():
+                st.error("Paste some LaTeX first.")
+            else:
+                persist_resume(
+                    storage_config,
+                    pasted_name,
+                    pasted_filename,
+                    pasted_latex,
+                    content_type="latex",
+                    source_content=pasted_latex,
+                )
+                st.success(f"Saved {pasted_name}")
+                st.rerun()
 
     resumes = load_resumes(storage_config)
     if not resumes:
