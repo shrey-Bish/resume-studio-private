@@ -33,7 +33,41 @@ def generate_application_pack(
         base_url="https://api.groq.com/openai/v1",
     )
 
-    prompt = f"""
+    prompt = _build_prompt(
+        resume_name=resume_name,
+        resume_text=resume_text,
+        resume_format=resume_format,
+        job_title=job_title,
+        job_text=job_text,
+        job_url=job_url,
+        user_notes=user_notes,
+    )
+
+    response = client.responses.create(
+        model=model,
+        input=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.2,
+    )
+
+    content = response.output_text.strip()
+    parsed = _parse_json(content)
+    parsed["tailored_resume_content"] = _decode_resume_content(parsed)
+    return parsed
+
+
+def _build_prompt(
+    resume_name: str,
+    resume_text: str,
+    resume_format: str,
+    job_title: str,
+    job_text: str,
+    job_url: str,
+    user_notes: str,
+) -> str:
+    return f"""
 Create a tailored application pack for the candidate below.
 
 Selected resume variant: {resume_name}
@@ -74,8 +108,10 @@ Rules:
 - If `resume_format` is `latex`, encode a full compile-ready LaTeX document in `tailored_resume_content_b64`.
 - If `resume_format` is `latex`, preserve the class, preamble, macros, and overall document structure unless a minimal safe change is necessary.
 - If `resume_format` is `latex`, do not wrap the LaTeX in markdown fences.
-- If `resume_format` is `latex`, the result must remain a full standalone document that includes `\\documentclass`, `\\begin{document}`, and `\\end{document}`.
+- If `resume_format` is `latex`, the result must remain a full standalone document that includes `\\documentclass`, `\\begin{{document}}`, and `\\end{{document}}`.
 - If the input resume is already a full LaTeX file, edit that file in place instead of rewriting it into a different structure.
+- If the source looks like a Jake's Resume template, keep the Jake-style one-page layout, section structure, macros, spacing, and bullet style intact.
+- For LaTeX resumes, prefer minimal edits to bullets/content instead of redesigning the template.
 - If `resume_format` is not `latex`, encode markdown headings and bullets in `tailored_resume_content_b64`.
 - Set `output_format` to `latex` or `markdown` accordingly.
 - The cover letter should be brief, around 180-250 words.
@@ -83,20 +119,6 @@ Rules:
 - If company name is unclear, use "Hiring Team".
 - If role title is unclear, infer from the JD but do not overstate certainty.
 """
-
-    response = client.responses.create(
-        model=model,
-        input=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.2,
-    )
-
-    content = response.output_text.strip()
-    parsed = _parse_json(content)
-    parsed["tailored_resume_content"] = _decode_resume_content(parsed)
-    return parsed
 
 
 def _parse_json(content: str) -> dict[str, Any]:
