@@ -33,6 +33,32 @@ def generate_application_pack(
         base_url="https://api.groq.com/openai/v1",
     )
 
+    if resume_format == "latex":
+        tailored_resume_content = _generate_latex_resume(
+            client=client,
+            model=model,
+            resume_name=resume_name,
+            resume_text=resume_text,
+            job_title=job_title,
+            job_text=job_text,
+            job_url=job_url,
+            user_notes=user_notes,
+        )
+        metadata = _generate_pack_metadata(
+            client=client,
+            model=model,
+            resume_name=resume_name,
+            resume_text=resume_text,
+            resume_format=resume_format,
+            job_title=job_title,
+            job_text=job_text,
+            job_url=job_url,
+            user_notes=user_notes,
+        )
+        metadata["tailored_resume_content"] = tailored_resume_content
+        metadata["output_format"] = "latex"
+        return metadata
+
     prompt = _build_prompt(
         resume_name=resume_name,
         resume_text=resume_text,
@@ -56,6 +82,119 @@ def generate_application_pack(
     parsed = _parse_json(content)
     parsed["tailored_resume_content"] = _decode_resume_content(parsed)
     return parsed
+
+
+def _generate_latex_resume(
+    client: OpenAI,
+    model: str,
+    resume_name: str,
+    resume_text: str,
+    job_title: str,
+    job_text: str,
+    job_url: str,
+    user_notes: str,
+) -> str:
+    prompt = f"""
+Tailor this LaTeX resume for the target job.
+
+Selected resume variant: {resume_name}
+Job title/page title: {job_title}
+Job URL: {job_url or "Not provided"}
+
+Target job description:
+<<<JOB_DESCRIPTION>>>
+{job_text}
+<<<END_JOB_DESCRIPTION>>>
+
+Additional user notes:
+<<<USER_NOTES>>>
+{user_notes or "None"}
+<<<END_USER_NOTES>>>
+
+Original LaTeX resume:
+<<<LATEX_RESUME>>>
+{resume_text}
+<<<END_LATEX_RESUME>>>
+
+Rules:
+- Return only the full LaTeX source, with no commentary.
+- Keep it a full standalone compile-ready file.
+- Preserve `\\documentclass`, the preamble, custom macros, spacing helpers, and section structure.
+- Preserve Jake-style formatting and layout if this resume uses a Jake template.
+- Make minimal edits focused on tailoring bullets, ordering, skills, summary, and keywords for the job.
+- Do not invent experience or metrics.
+- Do not wrap the output in code fences.
+"""
+
+    response = client.responses.create(
+        model=model,
+        input=[
+            {"role": "system", "content": "You are an expert LaTeX resume editor. Return only full compile-ready LaTeX."},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.2,
+    )
+    return _strip_code_fences(response.output_text.strip())
+
+
+def _generate_pack_metadata(
+    client: OpenAI,
+    model: str,
+    resume_name: str,
+    resume_text: str,
+    resume_format: str,
+    job_title: str,
+    job_text: str,
+    job_url: str,
+    user_notes: str,
+) -> dict[str, Any]:
+    prompt = f"""
+Create non-resume application materials for the candidate below.
+
+Selected resume variant: {resume_name}
+Resume format: {resume_format}
+Job title/page title: {job_title}
+Job URL: {job_url or "Not provided"}
+
+Candidate resume:
+<<<RESUME>>>
+{resume_text}
+<<<END_RESUME>>>
+
+Job description:
+<<<JOB_DESCRIPTION>>>
+{job_text}
+<<<END_JOB_DESCRIPTION>>>
+
+Additional user notes:
+<<<USER_NOTES>>>
+{user_notes or "None"}
+<<<END_USER_NOTES>>>
+
+Return JSON with exactly these keys:
+- company_name: string
+- role_title: string
+- fit_summary: string
+- keyword_matches: array of strings, max 10
+- cover_letter: string
+- cold_email: string
+
+Rules:
+- The cover letter should be brief, around 180-250 words.
+- The cold email should be short, practical, and personalized.
+- If company name is unclear, use "Hiring Team".
+- If role title is unclear, infer from the JD but do not overstate certainty.
+"""
+
+    response = client.responses.create(
+        model=model,
+        input=[
+            {"role": "system", "content": "Return only valid JSON matching the requested schema."},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.2,
+    )
+    return _parse_json(response.output_text.strip())
 
 
 def _build_prompt(
