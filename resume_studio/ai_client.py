@@ -74,6 +74,8 @@ Rules:
 - If `resume_format` is `latex`, encode a full compile-ready LaTeX document in `tailored_resume_content_b64`.
 - If `resume_format` is `latex`, preserve the class, preamble, macros, and overall document structure unless a minimal safe change is necessary.
 - If `resume_format` is `latex`, do not wrap the LaTeX in markdown fences.
+- If `resume_format` is `latex`, the result must remain a full standalone document that includes `\\documentclass`, `\\begin{document}`, and `\\end{document}`.
+- If the input resume is already a full LaTeX file, edit that file in place instead of rewriting it into a different structure.
 - If `resume_format` is not `latex`, encode markdown headings and bullets in `tailored_resume_content_b64`.
 - Set `output_format` to `latex` or `markdown` accordingly.
 - The cover letter should be brief, around 180-250 words.

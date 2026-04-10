@@ -15,7 +15,7 @@ if str(ROOT_DIR) not in sys.path:
 from resume_studio.ai_client import generate_application_pack
 from resume_studio.exporters import docx_bytes, markdown_bytes, pdf_bytes, zip_bytes
 from resume_studio.job_parser import build_job_input, extract_resume_text
-from resume_studio.latex_tools import compile_latex_source, latex_compiler_available, pdf_preview_iframe
+from resume_studio.latex_tools import compile_latex_source, latex_compiler_available, pdf_preview_iframe, validate_latex_source
 from resume_studio.storage import (
     load_generations,
     load_resumes,
@@ -308,6 +308,9 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
         st.markdown("#### Tailored Resume")
         if resume_format == "latex":
             st.text_area("Tailored LaTeX", value=resume_content, height=320)
+            is_valid_latex, latex_message = validate_latex_source(resume_content)
+            if not is_valid_latex:
+                st.warning(latex_message)
             st.download_button(
                 "Download resume (.tex)",
                 data=resume_content.encode("utf-8"),
@@ -322,9 +325,11 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
                     mime="application/pdf",
                 )
                 components.html(pdf_preview_iframe(compiled_pdf, height=520), height=540)
-            elif latex_compiler_available():
+            elif latex_compiler_available() and is_valid_latex:
                 st.warning("The LaTeX compiler is available, but this file did not compile successfully.")
                 st.code(st.session_state.get(f"{compile_key}-compile-error", "Compilation failed."), language="text")
+            elif latex_compiler_available():
+                st.info("Fix the LaTeX structure above and regenerate. The current output is not a standalone `.tex` document yet.")
             else:
                 st.info("LaTeX preview will appear when the app is running in an environment with `latexmk`, `pdflatex`, or `xelatex`.")
         else:

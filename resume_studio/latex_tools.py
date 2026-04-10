@@ -11,7 +11,24 @@ def latex_compiler_available() -> bool:
     return any(shutil.which(command) for command in ("latexmk", "pdflatex", "xelatex"))
 
 
+def validate_latex_source(source: str) -> tuple[bool, str]:
+    text = source.strip()
+    if not text:
+        return False, "The tailored LaTeX is empty."
+    if "\\documentclass" not in text:
+        return False, "The tailored LaTeX is missing `\\documentclass`."
+    if "\\begin{document}" not in text:
+        return False, "The tailored LaTeX is missing `\\begin{document}`."
+    if "\\end{document}" not in text:
+        return False, "The tailored LaTeX is missing `\\end{document}`."
+    return True, ""
+
+
 def compile_latex_source(source: str, jobname: str = "resume") -> tuple[bytes, str]:
+    is_valid, message = validate_latex_source(source)
+    if not is_valid:
+        raise RuntimeError(message)
+
     with tempfile.TemporaryDirectory() as tmp_dir:
         workspace = Path(tmp_dir)
         tex_path = workspace / f"{jobname}.tex"
