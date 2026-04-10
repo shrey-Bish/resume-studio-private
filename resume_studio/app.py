@@ -11,11 +11,12 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from resume_studio.ai_client import generate_application_pack
-from resume_studio.exporters import docx_bytes, markdown_bytes, pdf_bytes, pdf_export_supported
+from resume_studio.exporters import docx_bytes, markdown_bytes, pdf_bytes, zip_bytes
 from resume_studio.job_parser import build_job_input, extract_resume_text
 from resume_studio.storage import (
     load_generations,
     load_resumes,
+    persist_export_bundle,
     persist_generation,
     persist_resume,
     seed_resume_if_missing_remote,
@@ -66,8 +67,6 @@ def main() -> None:
             "- Paste either a JD, a link, or both.\n"
             "- Add notes like tone, visa mention, or preferred project emphasis."
         )
-        if not pdf_export_supported():
-            st.caption("PDF export is disabled here, so use Markdown or DOCX downloads.")
 
     if not storage_config["repo"] or not storage_config["token"]:
         st.error("GitHub storage is required. Add `GITHUB_REPO` and `GITHUB_TOKEN` to Streamlit secrets.")
@@ -170,7 +169,7 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
 
     if st.button("Generate tailored pack", type="primary"):
         if not api_key:
-            st.error("Add your OpenAI API key in the sidebar first.")
+            st.error("Add your Gemini API key in Streamlit secrets.")
             return
 
         if not job_url.strip() and not job_text.strip():
@@ -212,10 +211,10 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
 
     latest = st.session_state.get("latest_generation")
     if latest:
-        render_generation_output(latest)
+        render_generation_output(latest, storage_config)
 
 
-def render_generation_output(generation: dict[str, object]) -> None:
+def render_generation_output(generation: dict[str, object], storage_config: dict[str, str]) -> None:
     st.divider()
     st.subheader("Generated Pack")
     st.write(f"**Company:** {generation['company_name']}")
@@ -231,6 +230,28 @@ def render_generation_output(generation: dict[str, object]) -> None:
     cover_letter = str(generation["cover_letter"])
     cold_email = str(generation["cold_email"])
     slug = _slugify(f"{generation['company_name']}-{generation['job_title']}")
+
+    st.markdown("#### Export Pack")
+    export_format = st.radio(
+        "Choose pack format",
+        options=["pdf", "docx", "md"],
+        horizontal=True,
+        format_func=lambda value: value.upper(),
+    )
+    pack_files = _bundle_files(slug, export_format, resume_md, cover_letter, cold_email)
+    action_col1, action_col2 = st.columns(2)
+    with action_col1:
+        st.download_button(
+            f"Download all 3 ({export_format.upper()} ZIP)",
+            data=zip_bytes(pack_files),
+            file_name=f"{slug}-{export_format}-pack.zip",
+            mime="application/zip",
+        )
+    with action_col2:
+        if st.button(f"Save all 3 to GitHub ({export_format.upper()})", type="secondary"):
+            folder = f"exports/{slug}-{generation['created_at'].replace(':', '-').replace('T', '_').replace('Z', '')}"
+            saved_paths = persist_export_bundle(storage_config, folder, pack_files)
+            st.success("Saved pack to GitHub:\n" + "\n".join(saved_paths))
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -248,13 +269,12 @@ def render_generation_output(generation: dict[str, object]) -> None:
             file_name=f"{slug}-resume.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
-        if pdf_export_supported():
-            st.download_button(
-                "Download resume (.pdf)",
-                data=pdf_bytes("Tailored Resume", resume_md),
-                file_name=f"{slug}-resume.pdf",
-                mime="application/pdf",
-            )
+        st.download_button(
+            "Download resume (.pdf)",
+            data=pdf_bytes("Tailored Resume", resume_md),
+            file_name=f"{slug}-resume.pdf",
+            mime="application/pdf",
+        )
 
     with col2:
         st.markdown("#### Cover Letter")
@@ -271,13 +291,12 @@ def render_generation_output(generation: dict[str, object]) -> None:
             file_name=f"{slug}-cover-letter.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
-        if pdf_export_supported():
-            st.download_button(
-                "Download cover letter (.pdf)",
-                data=pdf_bytes("Cover Letter", cover_letter),
-                file_name=f"{slug}-cover-letter.pdf",
-                mime="application/pdf",
-            )
+        st.download_button(
+            "Download cover letter (.pdf)",
+            data=pdf_bytes("Cover Letter", cover_letter),
+            file_name=f"{slug}-cover-letter.pdf",
+            mime="application/pdf",
+        )
 
     with col3:
         st.markdown("#### Cold Email")
@@ -294,13 +313,12 @@ def render_generation_output(generation: dict[str, object]) -> None:
             file_name=f"{slug}-cold-email.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
-        if pdf_export_supported():
-            st.download_button(
-                "Download cold email (.pdf)",
-                data=pdf_bytes("Cold Email", cold_email),
-                file_name=f"{slug}-cold-email.pdf",
-                mime="application/pdf",
-            )
+        st.download_button(
+            "Download cold email (.pdf)",
+            data=pdf_bytes("Cold Email", cold_email),
+            file_name=f"{slug}-cold-email.pdf",
+            mime="application/pdf",
+        )
 
 
 def render_history(storage_config: dict[str, str]) -> None:
@@ -330,6 +348,29 @@ def _secret(key: str, default: str = "") -> str:
         return str(st.secrets.get(key, default))
     except Exception:  # noqa: BLE001
         return default
+
+
+def _bundle_files(
+    slug: str,
+    export_format: str,
+    resume_md: str,
+    cover_letter: str,
+    cold_email: str,
+) -> list[tuple[str, bytes]]:
+    documents = [
+        ("resume", "Tailored Resume", resume_md),
+        ("cover-letter", "Cover Letter", cover_letter),
+        ("cold-email", "Cold Email", cold_email),
+    ]
+    files: list[tuple[str, bytes]] = []
+    for name, title, body in documents:
+        if export_format == "pdf":
+            files.append((f"{slug}-{name}.pdf", pdf_bytes(title, body)))
+        elif export_format == "docx":
+            files.append((f"{slug}-{name}.docx", docx_bytes(title, body)))
+        else:
+            files.append((f"{slug}-{name}.md", markdown_bytes(body)))
+    return files
 
 
 if __name__ == "__main__":

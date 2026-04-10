@@ -1,18 +1,16 @@
 from __future__ import annotations
 
-import shutil
-import subprocess
-import tempfile
+import re
+import zipfile
 from html import escape
 from io import BytesIO
-from pathlib import Path
 
 from docx import Document
-
-
-APP_DIR = Path(__file__).resolve().parent
-ROOT_DIR = APP_DIR.parent
-PDF_RENDERER = APP_DIR / "render_pdf.mjs"
+from reportlab.lib.colors import HexColor
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import ListFlowable, ListItem, Paragraph, SimpleDocTemplate, Spacer
 
 
 def markdown_bytes(value: str) -> bytes:
@@ -49,151 +47,56 @@ def docx_bytes(title: str, body: str) -> bytes:
 
 
 def pdf_bytes(title: str, body: str) -> bytes:
-    if not pdf_export_supported():
-        raise RuntimeError("PDF export is unavailable in this environment. Use Markdown or DOCX instead.")
+    buffer = BytesIO()
+    document = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        leftMargin=0.55 * inch,
+        rightMargin=0.55 * inch,
+        topMargin=0.55 * inch,
+        bottomMargin=0.55 * inch,
+    )
+    styles = _pdf_styles()
+    story = [Paragraph(_escape_pdf(title), styles["title"]), Spacer(1, 10)]
 
-    html = _markdown_to_html(title=title, body=body)
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        tmp_path = Path(tmp_dir)
-        input_path = tmp_path / "document.html"
-        output_path = tmp_path / "document.pdf"
-        input_path.write_text(html, encoding="utf-8")
-
-        command = [
-            "node",
-            str(PDF_RENDERER),
-            str(input_path),
-            str(output_path),
-        ]
-        subprocess.run(command, cwd=ROOT_DIR, check=True, capture_output=True, text=True)
-        return output_path.read_bytes()
-
-
-def pdf_export_supported() -> bool:
-    return shutil.which("node") is not None and PDF_RENDERER.exists()
-
-
-def _markdown_to_html(title: str, body: str) -> str:
-    blocks: list[str] = []
-    in_list = False
-
+    bullet_items: list[ListItem] = []
     for raw_line in body.splitlines():
         line = raw_line.strip()
         if not line:
-            if in_list:
-                blocks.append("</ul>")
-                in_list = False
-            blocks.append("<div class='spacer'></div>")
-            continue
-
-        if line.startswith("# "):
-            if in_list:
-                blocks.append("</ul>")
-                in_list = False
-            blocks.append(f"<h1>{escape(line[2:].strip())}</h1>")
-            continue
-
-        if line.startswith("## "):
-            if in_list:
-                blocks.append("</ul>")
-                in_list = False
-            blocks.append(f"<h2>{escape(line[3:].strip())}</h2>")
-            continue
-
-        if line.startswith("### "):
-            if in_list:
-                blocks.append("</ul>")
-                in_list = False
-            blocks.append(f"<h3>{escape(line[4:].strip())}</h3>")
+            if bullet_items:
+                story.append(ListFlowable(bullet_items, bulletType="bullet", leftIndent=18))
+                bullet_items = []
+            story.append(Spacer(1, 6))
             continue
 
         if line.startswith("- "):
-            if not in_list:
-                blocks.append("<ul>")
-                in_list = True
-            blocks.append(f"<li>{_format_inline(line[2:].strip())}</li>")
+            bullet_items.append(ListItem(Paragraph(_format_pdf_inline(line[2:].strip()), styles["body"])))
             continue
 
-        if in_list:
-            blocks.append("</ul>")
-            in_list = False
+        if bullet_items:
+            story.append(ListFlowable(bullet_items, bulletType="bullet", leftIndent=18))
+            bullet_items = []
 
-        blocks.append(f"<p>{_format_inline(line)}</p>")
+        if line.startswith("# "):
+            story.append(Paragraph(_escape_pdf(line[2:].strip()), styles["h1"]))
+        elif line.startswith("## "):
+            story.append(Paragraph(_escape_pdf(line[3:].strip()), styles["h2"]))
+        elif line.startswith("### "):
+            story.append(Paragraph(_escape_pdf(line[4:].strip()), styles["h3"]))
+        else:
+            story.append(Paragraph(_format_pdf_inline(line), styles["body"]))
+        story.append(Spacer(1, 4))
 
-    if in_list:
-        blocks.append("</ul>")
+    if bullet_items:
+        story.append(ListFlowable(bullet_items, bulletType="bullet", leftIndent=18))
 
-    styles = """
-    <style>
-      @page { size: A4; margin: 0.55in; }
-      :root {
-        --text: #172033;
-        --muted: #4b5567;
-        --line: #d7dce5;
-        --accent: #0f766e;
-      }
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        color: var(--text);
-        line-height: 1.45;
-        font-size: 11.4pt;
-        margin: 0;
-      }
-      .page-title {
-        font-size: 9pt;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: var(--accent);
-        margin-bottom: 12px;
-      }
-      h1, h2, h3 { margin: 0; }
-      h1 {
-        font-size: 19pt;
-        margin-top: 18px;
-        margin-bottom: 8px;
-      }
-      h2 {
-        font-size: 12.5pt;
-        margin-top: 18px;
-        margin-bottom: 6px;
-        padding-bottom: 3px;
-        border-bottom: 1px solid var(--line);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      h3 {
-        font-size: 11.6pt;
-        margin-top: 12px;
-        margin-bottom: 4px;
-      }
-      p {
-        margin: 0 0 7px 0;
-      }
-      ul {
-        margin: 6px 0 10px 18px;
-        padding: 0;
-      }
-      li {
-        margin: 0 0 4px 0;
-      }
-      strong { font-weight: 700; }
-      em { font-style: italic; }
-      .spacer {
-        height: 4px;
-      }
-      .muted {
-        color: var(--muted);
-      }
-    </style>
-    """
+    document.build(story)
+    buffer.seek(0)
+    return buffer.read()
 
-    return (
-        "<!doctype html><html><head><meta charset='utf-8'>"
-        f"{styles}</head><body>"
-        f"<div class='page-title'>{escape(title)}</div>"
-        + "".join(blocks)
-        + "</body></html>"
-    )
+
+def pdf_export_supported() -> bool:
+    return True
 
 
 def _format_inline(value: str) -> str:
@@ -210,3 +113,80 @@ def _format_inline(value: str) -> str:
     for index in range(1, len(parts), 2):
         parts[index] = f"<em>{parts[index]}</em>"
     return "".join(parts)
+
+
+def zip_bytes(files: list[tuple[str, bytes]]) -> bytes:
+    buffer = BytesIO()
+    with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for name, payload in files:
+            archive.writestr(name, payload)
+    buffer.seek(0)
+    return buffer.read()
+
+
+def _pdf_styles() -> dict[str, ParagraphStyle]:
+    base = getSampleStyleSheet()
+    return {
+        "title": ParagraphStyle(
+            "Title",
+            parent=base["Title"],
+            fontName="Helvetica-Bold",
+            fontSize=18,
+            leading=22,
+            textColor=HexColor("#0f766e"),
+            spaceAfter=8,
+        ),
+        "h1": ParagraphStyle(
+            "H1",
+            parent=base["Heading1"],
+            fontName="Helvetica-Bold",
+            fontSize=16,
+            leading=20,
+            textColor=HexColor("#172033"),
+            spaceBefore=8,
+            spaceAfter=6,
+        ),
+        "h2": ParagraphStyle(
+            "H2",
+            parent=base["Heading2"],
+            fontName="Helvetica-Bold",
+            fontSize=12,
+            leading=16,
+            textColor=HexColor("#172033"),
+            spaceBefore=8,
+            spaceAfter=4,
+        ),
+        "h3": ParagraphStyle(
+            "H3",
+            parent=base["Heading3"],
+            fontName="Helvetica-Bold",
+            fontSize=10.5,
+            leading=14,
+            textColor=HexColor("#172033"),
+            spaceBefore=6,
+            spaceAfter=3,
+        ),
+        "body": ParagraphStyle(
+            "Body",
+            parent=base["BodyText"],
+            fontName="Helvetica",
+            fontSize=10.5,
+            leading=14,
+            textColor=HexColor("#172033"),
+        ),
+    }
+
+
+def _format_pdf_inline(value: str) -> str:
+    text = _escape_pdf(value)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+    text = re.sub(r"\*(.+?)\*", r"<i>\1</i>", text)
+    return text
+
+
+def _escape_pdf(value: str) -> str:
+    return (
+        value.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )

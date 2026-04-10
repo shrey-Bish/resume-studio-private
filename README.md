@@ -13,6 +13,7 @@ It supports:
 - PDF, DOCX, and Markdown downloads
 - optional GitHub-backed storage in a private repo
 - GitHub-backed storage enabled by default in Streamlit Cloud
+- export all 3 generated documents together as a ZIP and save the pack back to GitHub
 
 ## Run locally
 

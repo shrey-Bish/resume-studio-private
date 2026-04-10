@@ -144,6 +144,19 @@ def persist_generation(storage_config: dict[str, str], payload: dict[str, Any]) 
     return save_generation(payload)
 
 
+def persist_export_bundle(
+    storage_config: dict[str, str],
+    folder: str,
+    files: list[tuple[str, bytes]],
+) -> list[str]:
+    saved_paths: list[str] = []
+    for filename, payload in files:
+        path = f"{folder}/{filename}"
+        _github_write_file(storage_config, path, payload, f"Save export {filename}")
+        saved_paths.append(path)
+    return saved_paths
+
+
 def save_generation(payload: dict[str, Any]) -> dict[str, Any]:
     history = _read_json(GENERATIONS_PATH)
     now = datetime.utcnow().isoformat(timespec="seconds") + "Z"
@@ -196,6 +209,38 @@ def _github_write_json(
     body: dict[str, Any] = {
         "message": message,
         "content": encoded,
+        "branch": storage_config["branch"],
+    }
+    if sha:
+        body["sha"] = sha
+
+    put_response = requests.put(url, headers=_github_headers(storage_config), json=body, timeout=20)
+    put_response.raise_for_status()
+
+
+def _github_write_file(
+    storage_config: dict[str, str],
+    path: str,
+    payload: bytes,
+    message: str,
+) -> None:
+    url = f"https://api.github.com/repos/{storage_config['repo']}/contents/{path}"
+    get_response = requests.get(
+        url,
+        headers=_github_headers(storage_config),
+        params={"ref": storage_config["branch"]},
+        timeout=20,
+    )
+
+    sha = None
+    if get_response.status_code == 200:
+        sha = get_response.json()["sha"]
+    elif get_response.status_code != 404:
+        get_response.raise_for_status()
+
+    body: dict[str, Any] = {
+        "message": message,
+        "content": base64.b64encode(payload).decode("utf-8"),
         "branch": storage_config["branch"],
     }
     if sha:
