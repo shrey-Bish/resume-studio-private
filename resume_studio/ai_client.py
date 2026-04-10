@@ -29,6 +29,7 @@ def generate_application_pack(
     job_url: str,
     user_notes: str,
     project_context: str = "",
+    tailoring_strength: str = "balanced",
 ) -> dict[str, Any]:
     client = OpenAI(
         api_key=api_key,
@@ -46,6 +47,7 @@ def generate_application_pack(
             job_url=job_url,
             user_notes=user_notes,
             project_context=project_context,
+            tailoring_strength=tailoring_strength,
         )
         metadata = _generate_pack_metadata(
             client=client,
@@ -58,6 +60,7 @@ def generate_application_pack(
             job_url=job_url,
             user_notes=user_notes,
             project_context=project_context,
+            tailoring_strength=tailoring_strength,
         )
         metadata["tailored_resume_content"] = tailored_resume_content
         metadata["output_format"] = "latex"
@@ -72,6 +75,7 @@ def generate_application_pack(
         job_url=job_url,
         user_notes=user_notes,
         project_context=project_context,
+        tailoring_strength=tailoring_strength,
     )
 
     response = client.responses.create(
@@ -99,6 +103,7 @@ def _generate_latex_resume(
     job_url: str,
     user_notes: str,
     project_context: str,
+    tailoring_strength: str,
 ) -> str:
     prompt = f"""
 Tailor this LaTeX resume for the target job.
@@ -132,11 +137,11 @@ Rules:
 - Keep it a full standalone compile-ready file.
 - Preserve `\\documentclass`, the preamble, custom macros, spacing helpers, and section structure.
 - Preserve Jake-style formatting and layout if this resume uses a Jake template.
-- Tailor with a moderate touch, not a rewrite.
-- Usually update the summary or top skills block, reorder the most relevant sections/projects, and rewrite roughly 3 to 6 bullets so they better match the JD.
+- Tailoring strength for this run: {tailoring_strength}.
+- {_strength_resume_rule(tailoring_strength)}
 - Mirror important JD wording where truthful, especially for tools, domains, and responsibilities already reflected in the resume.
 - Leave clearly unrelated but valid experience alone unless space pressure makes reordering necessary.
-- Keep at least about 70 percent of the original wording and structure intact unless the source resume is extremely generic.
+- {_strength_preservation_rule(tailoring_strength)}
 - You may incorporate relevant GitHub projects only if they are supported by the provided repo metadata.
 - Do not invent experience or metrics.
 - Do not wrap the output in code fences.
@@ -164,6 +169,7 @@ def _generate_pack_metadata(
     job_url: str,
     user_notes: str,
     project_context: str,
+    tailoring_strength: str,
 ) -> dict[str, Any]:
     prompt = f"""
 Create non-resume application materials for the candidate below.
@@ -202,6 +208,7 @@ Return JSON with exactly these keys:
 - cold_email: string
 
 Rules:
+- Tailoring strength for this run: {tailoring_strength}.
 - The cover letter should be brief, around 180-250 words.
 - The cold email should be short, practical, and personalized.
 - You may mention GitHub projects only if they are directly supported by the provided repo metadata.
@@ -230,6 +237,7 @@ def _build_prompt(
     job_url: str,
     user_notes: str,
     project_context: str,
+    tailoring_strength: str,
 ) -> str:
     return f"""
 Create a tailored application pack for the candidate below.
@@ -274,11 +282,11 @@ Rules:
 - Keep the tailored resume ATS-friendly and concise.
 - Preserve contact information from the resume when present.
 - Encode the resume content in base64 and return it in `tailored_resume_content_b64`.
-- Tailor with a moderate touch, not a rewrite.
-- Usually update the summary, skills ordering, project ordering, and roughly 3 to 6 bullets so the JD match is clear.
+- Tailoring strength for this run: {tailoring_strength}.
+- {_strength_resume_rule(tailoring_strength)}
 - Mirror important JD wording where truthful, especially for tools, domains, and responsibilities already reflected in the source.
 - Leave most unrelated but still valuable content intact; do not aggressively replace the whole resume for one posting.
-- Keep at least about 70 percent of the original structure and wording intact unless the input is extremely generic.
+- {_strength_preservation_rule(tailoring_strength)}
 - You may incorporate relevant GitHub projects only if they are supported by the provided repo metadata.
 - If `resume_format` is `latex`, encode a full compile-ready LaTeX document in `tailored_resume_content_b64`.
 - If `resume_format` is `latex`, preserve the class, preamble, macros, and overall document structure unless a minimal safe change is necessary.
@@ -294,6 +302,22 @@ Rules:
 - If company name is unclear, use "Hiring Team".
 - If role title is unclear, infer from the JD but do not overstate certainty.
 """
+
+
+def _strength_resume_rule(strength: str) -> str:
+    if strength == "light":
+        return "Make light edits: usually update the summary or top skills block, reorder only the most relevant section if needed, and rewrite about 1 to 3 bullets."
+    if strength == "aggressive":
+        return "Make strong but truthful edits: update the summary, skills ordering, project ordering, and rewrite about 5 to 8 bullets so the JD match is very clear."
+    return "Make moderate edits: usually update the summary or top skills block, reorder the most relevant sections or projects, and rewrite about 3 to 6 bullets so they better match the JD."
+
+
+def _strength_preservation_rule(strength: str) -> str:
+    if strength == "light":
+        return "Keep at least about 85 percent of the original wording and structure intact unless the source resume is extremely generic."
+    if strength == "aggressive":
+        return "Keep at least about 55 to 65 percent of the original wording and structure intact unless the source resume is extremely generic."
+    return "Keep at least about 70 percent of the original wording and structure intact unless the source resume is extremely generic."
 
 
 def _parse_json(content: str) -> dict[str, Any]:

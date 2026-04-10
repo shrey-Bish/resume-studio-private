@@ -187,6 +187,12 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
         value=True,
         help="Uses your GitHub token to scan your repos, rank likely matches, and pass the best ones into tailoring.",
     )
+    tailoring_strength = st.segmented_control(
+        "Tailoring strength",
+        options=["light", "balanced", "aggressive"],
+        default="balanced",
+        help="Light keeps most wording untouched, balanced makes noticeable JD-focused edits, aggressive pushes harder while staying truthful.",
+    )
 
     col1, col2 = st.columns(2)
     with col1:
@@ -235,6 +241,7 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
                     job_url=job_input["source_url"],
                     user_notes=user_notes,
                     project_context=project_context,
+                    tailoring_strength=str(tailoring_strength or "balanced"),
                 )
             except Exception as exc:  # noqa: BLE001
                 st.error(f"Generation failed: {exc}")
@@ -249,6 +256,7 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
                 "source_url": job_input["source_url"],
                 "fit_summary": result.get("fit_summary", ""),
                 "keyword_matches": result.get("keyword_matches", []),
+                "tailoring_strength": str(tailoring_strength or "balanced"),
                 "github_project_matches": matched_projects,
                 "tailored_resume_content": result.get("tailored_resume_content", ""),
                 "output_format": result.get("output_format", "markdown"),
@@ -274,6 +282,8 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
         st.info(str(generation["fit_summary"]))
     if generation.get("keyword_matches"):
         st.caption("Matched keywords: " + ", ".join(generation["keyword_matches"]))
+    if generation.get("tailoring_strength"):
+        st.caption("Tailoring strength: " + str(generation["tailoring_strength"]).capitalize())
     project_matches = generation.get("github_project_matches", [])
     if project_matches:
         st.markdown("#### Relevant GitHub Projects")
