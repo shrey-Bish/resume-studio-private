@@ -1,0 +1,7 @@
+node_modules/
+.venv-resume-studio/
+resume_studio/data/*.json
+!resume_studio/data/.gitkeep
+.DS_Store
+__pycache__/
+*.pyc

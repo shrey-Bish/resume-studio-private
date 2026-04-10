@@ -1,0 +1,24 @@
+{
+  "name": "resume-studio-private",
+  "version": "1.0.0",
+  "description": "Private resume tailoring studio with Streamlit, OpenAI, and optional GitHub-backed storage",
+  "scripts": {
+    "pages": "npx serve docs"
+  },
+  "keywords": [
+    "resume",
+    "streamlit",
+    "openai",
+    "github-storage"
+  ],
+  "author": "Shrey Bishnoi",
+  "homepage": "https://github.com/shrey-Bish/resume-studio-private",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shrey-Bish/resume-studio-private.git"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "playwright": "^1.58.1"
+  }
+}
