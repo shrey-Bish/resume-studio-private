@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import sys
 
@@ -400,6 +401,9 @@ def _slugify(value: str) -> str:
 
 
 def _secret(key: str, default: str = "") -> str:
+    env_value = os.environ.get(key)
+    if env_value is not None and env_value != "":
+        return env_value
     try:
         return str(st.secrets.get(key, default))
     except Exception:  # noqa: BLE001
