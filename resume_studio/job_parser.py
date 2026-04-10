@@ -7,38 +7,13 @@ import subprocess
 from pathlib import Path
 from urllib.parse import urlparse
 
-import docx2txt
 import requests
 from bs4 import BeautifulSoup
-from pypdf import PdfReader
 
 
 def looks_like_url(value: str) -> bool:
     parsed = urlparse(value.strip())
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
-
-
-def extract_resume_text(file_name: str, raw_bytes: bytes) -> str:
-    suffix = Path(file_name).suffix.lower()
-    if suffix == ".pdf":
-        return _extract_pdf_text(raw_bytes)
-    if suffix in {".docx", ".doc"}:
-        temp_path = Path(__file__).resolve().parent / "data" / f"tmp_upload{suffix}"
-        temp_path.parent.mkdir(parents=True, exist_ok=True)
-        temp_path.write_bytes(raw_bytes)
-        try:
-            return docx2txt.process(str(temp_path))
-        finally:
-            temp_path.unlink(missing_ok=True)
-    return raw_bytes.decode("utf-8", errors="ignore")
-
-
-def _extract_pdf_text(raw_bytes: bytes) -> str:
-    import io
-
-    reader = PdfReader(io.BytesIO(raw_bytes))
-    pages = [page.extract_text() or "" for page in reader.pages]
-    return "\n".join(pages)
 
 
 def fetch_job_posting(url: str, timeout: int = 20) -> dict[str, str]:

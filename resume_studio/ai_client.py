@@ -27,6 +27,7 @@ def generate_application_pack(
     job_text: str,
     job_url: str,
     user_notes: str,
+    project_context: str = "",
 ) -> dict[str, Any]:
     client = OpenAI(
         api_key=api_key,
@@ -43,6 +44,7 @@ def generate_application_pack(
             job_text=job_text,
             job_url=job_url,
             user_notes=user_notes,
+            project_context=project_context,
         )
         metadata = _generate_pack_metadata(
             client=client,
@@ -54,6 +56,7 @@ def generate_application_pack(
             job_text=job_text,
             job_url=job_url,
             user_notes=user_notes,
+            project_context=project_context,
         )
         metadata["tailored_resume_content"] = tailored_resume_content
         metadata["output_format"] = "latex"
@@ -67,6 +70,7 @@ def generate_application_pack(
         job_text=job_text,
         job_url=job_url,
         user_notes=user_notes,
+        project_context=project_context,
     )
 
     response = client.responses.create(
@@ -93,6 +97,7 @@ def _generate_latex_resume(
     job_text: str,
     job_url: str,
     user_notes: str,
+    project_context: str,
 ) -> str:
     prompt = f"""
 Tailor this LaTeX resume for the target job.
@@ -111,6 +116,11 @@ Additional user notes:
 {user_notes or "None"}
 <<<END_USER_NOTES>>>
 
+Relevant GitHub projects:
+<<<PROJECT_CONTEXT>>>
+{project_context or "None"}
+<<<END_PROJECT_CONTEXT>>>
+
 Original LaTeX resume:
 <<<LATEX_RESUME>>>
 {resume_text}
@@ -122,6 +132,7 @@ Rules:
 - Preserve `\\documentclass`, the preamble, custom macros, spacing helpers, and section structure.
 - Preserve Jake-style formatting and layout if this resume uses a Jake template.
 - Make minimal edits focused on tailoring bullets, ordering, skills, summary, and keywords for the job.
+- You may incorporate relevant GitHub projects only if they are supported by the provided repo metadata.
 - Do not invent experience or metrics.
 - Do not wrap the output in code fences.
 """
@@ -147,6 +158,7 @@ def _generate_pack_metadata(
     job_text: str,
     job_url: str,
     user_notes: str,
+    project_context: str,
 ) -> dict[str, Any]:
     prompt = f"""
 Create non-resume application materials for the candidate below.
@@ -171,6 +183,11 @@ Additional user notes:
 {user_notes or "None"}
 <<<END_USER_NOTES>>>
 
+Relevant GitHub projects:
+<<<PROJECT_CONTEXT>>>
+{project_context or "None"}
+<<<END_PROJECT_CONTEXT>>>
+
 Return JSON with exactly these keys:
 - company_name: string
 - role_title: string
@@ -182,6 +199,7 @@ Return JSON with exactly these keys:
 Rules:
 - The cover letter should be brief, around 180-250 words.
 - The cold email should be short, practical, and personalized.
+- You may mention GitHub projects only if they are directly supported by the provided repo metadata.
 - If company name is unclear, use "Hiring Team".
 - If role title is unclear, infer from the JD but do not overstate certainty.
 """
@@ -205,6 +223,7 @@ def _build_prompt(
     job_text: str,
     job_url: str,
     user_notes: str,
+    project_context: str,
 ) -> str:
     return f"""
 Create a tailored application pack for the candidate below.
@@ -230,6 +249,11 @@ Additional user notes:
 {user_notes or "None"}
 <<<END_USER_NOTES>>>
 
+Relevant GitHub projects:
+<<<PROJECT_CONTEXT>>>
+{project_context or "None"}
+<<<END_PROJECT_CONTEXT>>>
+
 Return JSON with exactly these keys:
 - company_name: string
 - role_title: string
@@ -244,6 +268,7 @@ Rules:
 - Keep the tailored resume ATS-friendly and concise.
 - Preserve contact information from the resume when present.
 - Encode the resume content in base64 and return it in `tailored_resume_content_b64`.
+- You may incorporate relevant GitHub projects only if they are supported by the provided repo metadata.
 - If `resume_format` is `latex`, encode a full compile-ready LaTeX document in `tailored_resume_content_b64`.
 - If `resume_format` is `latex`, preserve the class, preamble, macros, and overall document structure unless a minimal safe change is necessary.
 - If `resume_format` is `latex`, do not wrap the LaTeX in markdown fences.

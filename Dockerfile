@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
+COPY package.json .
+RUN npm install --omit=dev
+
 COPY . .
 
 EXPOSE 10000

@@ -1,14 +1,12 @@
 {
   "name": "resume-studio-private",
   "version": "1.0.0",
-  "description": "Private resume tailoring studio with Streamlit, OpenAI, and optional GitHub-backed storage",
-  "scripts": {
-    "pages": "npx serve docs"
-  },
+  "description": "Private LaTeX resume tailoring studio with Streamlit, Groq, and GitHub-backed storage",
+  "scripts": {},
   "keywords": [
     "resume",
     "streamlit",
-    "openai",
+    "groq",
     "github-storage"
   ],
   "author": "Shrey Bishnoi",

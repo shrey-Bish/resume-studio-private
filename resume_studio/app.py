@@ -14,7 +14,8 @@ if str(ROOT_DIR) not in sys.path:
 
 from resume_studio.ai_client import generate_application_pack
 from resume_studio.exporters import docx_bytes, markdown_bytes, pdf_bytes, zip_bytes
-from resume_studio.job_parser import build_job_input, extract_resume_text
+from resume_studio.github_projects import format_project_context, select_relevant_projects
+from resume_studio.job_parser import build_job_input
 from resume_studio.latex_tools import compile_latex_source, latex_compiler_available, pdf_preview_iframe, validate_latex_source
 from resume_studio.storage import (
     load_generations,
@@ -64,9 +65,10 @@ def main() -> None:
 
         st.subheader("Tips")
         st.markdown(
-            "- Upload your 3 base resumes first.\n"
+            "- Upload your LaTeX base resumes first.\n"
             "- Paste either a JD, a link, or both.\n"
-            "- Add notes like tone, visa mention, or preferred project emphasis."
+            "- Add notes like tone, visa mention, or preferred project emphasis.\n"
+            "- Turn on GitHub matching if you want the app to pull relevant repos from your GitHub."
         )
 
     if not storage_config["repo"] or not storage_config["token"]:
@@ -91,19 +93,17 @@ def main() -> None:
 
 def render_resume_library(storage_config: dict[str, str]) -> None:
     st.subheader("Base Resume Library")
-    st.markdown("Upload files or paste raw LaTeX and save it as a resume variant.")
+    st.markdown("Upload `.tex` files or paste raw LaTeX and save each one as a resume variant.")
     uploads = st.file_uploader(
-        "Upload resumes",
-        type=["pdf", "docx", "doc", "txt", "md", "tex"],
+        "Upload LaTeX resumes",
+        type=["tex"],
         accept_multiple_files=True,
-        help="Recommended names: AI+SE, SE, and DE. Upload `.tex` if you want LaTeX tailoring and compilation.",
+        help="Recommended names: AI+SE, SE, and DE.",
     )
 
     if uploads:
         for upload in uploads:
-            raw_text = upload.getvalue().decode("utf-8", errors="ignore") if upload.name.lower().endswith(".tex") else ""
-            extracted_text = raw_text if upload.name.lower().endswith(".tex") else extract_resume_text(upload.name, upload.getvalue())
-            content_type = "latex" if upload.name.lower().endswith(".tex") else "text"
+            raw_text = upload.getvalue().decode("utf-8", errors="ignore")
             suggested_name = Path(upload.name).stem
             with st.expander(f"Import {upload.name}", expanded=False):
                 custom_name = st.text_input(
@@ -112,8 +112,8 @@ def render_resume_library(storage_config: dict[str, str]) -> None:
                     key=f"label-{upload.name}",
                 )
                 st.text_area(
-                    "Extracted text preview",
-                    value=extracted_text[:4000],
+                    "LaTeX preview",
+                    value=raw_text[:4000],
                     height=220,
                     key=f"preview-{upload.name}",
                 )
@@ -122,9 +122,9 @@ def render_resume_library(storage_config: dict[str, str]) -> None:
                         storage_config,
                         custom_name,
                         upload.name,
-                        extracted_text,
-                        content_type=content_type,
-                        source_content=raw_text if content_type == "latex" else extracted_text,
+                        raw_text,
+                        content_type="latex",
+                        source_content=raw_text,
                     )
                     st.success(f"Saved {custom_name}")
                     st.rerun()
@@ -182,6 +182,11 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
     selected_format = selected_resume.get("content_type", "text")
     if selected_format == "latex":
         st.info("This resume will be tailored as LaTeX and compiled to a real PDF preview when the compiler is available.")
+    use_github_projects = st.checkbox(
+        "Auto-select relevant GitHub projects for this JD",
+        value=True,
+        help="Uses your GitHub token to scan your repos, rank likely matches, and pass the best ones into tailoring.",
+    )
 
     col1, col2 = st.columns(2)
     with col1:
@@ -210,6 +215,15 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
         with st.spinner("Fetching the job details and generating your documents..."):
             try:
                 job_input = build_job_input(job_text=job_text, job_url=job_url)
+                matched_projects: list[dict[str, object]] = []
+                project_context = ""
+                if use_github_projects:
+                    matched_projects = select_relevant_projects(
+                        token=storage_config["token"],
+                        job_text=job_input["text"],
+                        username=_secret("GITHUB_USERNAME").strip() or None,
+                    )
+                    project_context = format_project_context(matched_projects)
                 result = generate_application_pack(
                     api_key=api_key,
                     model=model,
@@ -220,6 +234,7 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
                     job_text=job_input["text"],
                     job_url=job_input["source_url"],
                     user_notes=user_notes,
+                    project_context=project_context,
                 )
             except Exception as exc:  # noqa: BLE001
                 st.error(f"Generation failed: {exc}")
@@ -234,6 +249,7 @@ def render_generation_tab(api_key: str, model: str, storage_config: dict[str, st
                 "source_url": job_input["source_url"],
                 "fit_summary": result.get("fit_summary", ""),
                 "keyword_matches": result.get("keyword_matches", []),
+                "github_project_matches": matched_projects,
                 "tailored_resume_content": result.get("tailored_resume_content", ""),
                 "output_format": result.get("output_format", "markdown"),
                 "cover_letter": result.get("cover_letter", ""),
@@ -258,6 +274,17 @@ def render_generation_output(generation: dict[str, object], storage_config: dict
         st.info(str(generation["fit_summary"]))
     if generation.get("keyword_matches"):
         st.caption("Matched keywords: " + ", ".join(generation["keyword_matches"]))
+    project_matches = generation.get("github_project_matches", [])
+    if project_matches:
+        st.markdown("#### Relevant GitHub Projects")
+        for project in project_matches:
+            label = f"[{project['name']}]({project['url']})"
+            matched = ", ".join(project.get("matched_keywords", []))
+            description = project.get("description", "")
+            summary = description or "Relevant based on repository metadata."
+            if matched:
+                summary = f"{summary} Matched: {matched}."
+            st.markdown(f"- {label}  \n  {summary}")
 
     resume_content = str(generation["tailored_resume_content"])
     cover_letter = str(generation["cover_letter"])

@@ -1,37 +1,37 @@
 # Resume Studio
 
-Resume Studio is a Streamlit app for managing multiple base resumes and tailoring them per job description.
+Resume Studio is a Streamlit app for managing multiple LaTeX base resumes and tailoring them per job description.
 
 ## Features
 
-- Upload and store multiple resumes locally
+- Upload or paste multiple `.tex` resumes
 - Paste a JD, a job link, or both
 - Choose which base resume to tailor
+- Auto-select relevant GitHub repos against the JD
 - Generate:
-  - tailored resume
+  - tailored LaTeX resume
   - brief cover letter
   - cold outreach email
-- Download outputs as `.md` or `.docx`
-- Download outputs as `.md`, `.docx`, or `.pdf`
-- Keep a small local history of recent generations
-- Optionally store resumes and generation history in a private GitHub repo
+- Recompile edited LaTeX and preview the real PDF
+- Save resumes, history, and export packs in a private GitHub repo
 
 ## Run
 
 ```bash
 cd /Users/shrey/Downloads/Resume/career-ops
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv-resume-studio
+source .venv-resume-studio/bin/activate
 pip install -r requirements-resume-studio.txt
+npm install
 streamlit run resume_studio/app.py
 ```
 
-Then open the local Streamlit URL in your browser, add your OpenAI API key in the sidebar, and start uploading resumes.
+Then open the local Streamlit URL in your browser and configure your secrets or environment variables.
 
 ## Notes
 
-- The app seeds one resume automatically from `cv.md` if that file exists.
-- Resume and generation data stay local in `resume_studio/data/`.
-- You can switch storage to GitHub in the sidebar and save data into a private repo using a fine-grained GitHub token.
+- The app expects GitHub-backed storage by default.
+- Set `GROQ_API_KEY`, `GITHUB_REPO`, `GITHUB_BRANCH`, and `GITHUB_TOKEN`.
+- Set `GITHUB_USERNAME` too if you want repo matching scoped to a specific account.
 - Job links first use a regular HTTP scrape, then fall back to a headless browser render for JS-heavy pages.
 - Review generated content before sending it anywhere.

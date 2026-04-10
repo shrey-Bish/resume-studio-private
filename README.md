@@ -8,16 +8,15 @@ Resume Studio is a Streamlit app that helps tailor one of your base resumes to a
 
 It supports:
 
-- multiple uploaded resume variants
-- LaTeX resume upload and tailoring
+- multiple LaTeX resume variants
+- LaTeX resume upload, paste, tailoring, and recompilation
 - real PDF preview for tailored LaTeX resumes when a TeX compiler is available
 - JD text paste or job URL scraping
-- PDF, DOCX, and Markdown downloads
-- optional GitHub-backed storage in a private repo
 - GitHub-backed storage enabled by default
+- GitHub project matching against the JD
 - export all 3 generated documents together as a ZIP and save the pack back to GitHub
 - Render-first deployment path with Docker
-- system packages installed for future LaTeX-based resume workflows
+- system packages installed for LaTeX compile workflows
 
 ## Run locally
 
@@ -30,7 +29,7 @@ npm install
 streamlit run app.py
 ```
 
-`npm install` is needed for the Playwright-based PDF renderer and browser fallback scraper.
+`npm install` is needed for the Playwright-based job-page scraper fallback.
 
 ## Deploy on Render
 
@@ -53,6 +52,7 @@ Required env vars:
 - `GITHUB_REPO`
 - `GITHUB_BRANCH`
 - `GITHUB_TOKEN`
+- `GITHUB_USERNAME` (optional, if you want project matching to scan a specific account)
 
 Render will expose a `PORT` env var automatically, and the container is already configured to use it.
 
